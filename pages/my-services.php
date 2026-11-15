@@ -51,9 +51,9 @@ $flash = $messages[$_GET['msg'] ?? ''] ?? null;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Services | Mendly</title>
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/my-requests-expert.css">
-    <link rel="stylesheet" href="assets/css/my-services.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/my-requests-expert.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/my-services.css'); ?>">
 </head>
 
 <body>

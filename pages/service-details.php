@@ -145,8 +145,8 @@ ORDER BY r.review_date DESC
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($service['title']); ?></title>
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/service-details.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/service-details.css'); ?>">
 </head>
 
 <body>
@@ -395,8 +395,8 @@ ORDER BY r.review_date DESC
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="assets/js/gallery.js"></script>
-<script src="assets/js/favorites.js"></script>
+<script src="<?php echo asset('assets/js/gallery.js'); ?>"></script>
+<script src="<?php echo asset('assets/js/favorites.js'); ?>"></script>
 
 </body>
 </html>

@@ -41,9 +41,9 @@ $formError = $errorMessages[$_GET['error'] ?? ''] ?? null;
 
     <title>Reset Password | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/login.css">
-    <link rel="stylesheet" href="assets/css/forgot-password.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/login.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/forgot-password.css'); ?>">
 </head>
 
 <body>
@@ -143,8 +143,8 @@ $formError = $errorMessages[$_GET['error'] ?? ''] ?? null;
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/reset-password.js"></script>
+    <script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+    <script src="<?php echo asset('assets/js/reset-password.js'); ?>"></script>
 
 </body>
 

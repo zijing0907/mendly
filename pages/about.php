@@ -15,8 +15,8 @@ $pageTitle = "About Us — Mendly";
   <title><?php echo htmlspecialchars($pageTitle); ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/global.css">
-  <link rel="stylesheet" href="assets/css/about.css">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/about.css'); ?>">
 </head>
 
 <body>
@@ -144,7 +144,7 @@ $pageTitle = "About Us — Mendly";
     </section>
   </main>
 
-  <script src="assets/js/about.js"></script>
+  <script src="<?php echo asset('assets/js/about.js'); ?>"></script>
 
   <?php include __DIR__ . '/../includes/footer.php'; ?>
 

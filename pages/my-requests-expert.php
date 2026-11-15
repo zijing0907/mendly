@@ -56,8 +56,8 @@ $nextSteps = [
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Requests | Mendly</title>
-  <link rel="stylesheet" href="assets/css/global.css">
-  <link rel="stylesheet" href="assets/css/my-requests-expert.css">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/my-requests-expert.css'); ?>">
 </head>
 
 <body>
@@ -131,7 +131,7 @@ $nextSteps = [
 
   <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-  <script src="assets/js/my-requests-expert.js"></script>
+  <script src="<?php echo asset('assets/js/my-requests-expert.js'); ?>"></script>
 
 </body>
 

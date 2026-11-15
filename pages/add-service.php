@@ -85,8 +85,8 @@ mysqli_close($conn);
 
     <title><?php echo $isEdit ? 'Edit Service' : 'Add a Service'; ?> | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/add-service.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/add-service.css'); ?>">
 </head>
 
 <body>
@@ -219,8 +219,8 @@ mysqli_close($conn);
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="assets/js/main.js"></script>
-<script src="assets/js/add-service.js"></script>
+<script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+<script src="<?php echo asset('assets/js/add-service.js'); ?>"></script>
 
 </body>
 </html>

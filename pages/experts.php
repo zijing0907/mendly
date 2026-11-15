@@ -79,8 +79,8 @@ if ($result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?> | Mendly</title>
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/experts.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/experts.css'); ?>">
 </head>
 
 <body>

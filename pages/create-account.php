@@ -16,8 +16,8 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
     <title>Create Account | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/create-account.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/create-account.css'); ?>">
 </head>
 
 <body>
@@ -155,8 +155,8 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/create-account.js"></script>
+    <script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+    <script src="<?php echo asset('assets/js/create-account.js'); ?>"></script>
 
 </body>
 

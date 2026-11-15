@@ -46,5 +46,5 @@ $currentUserId = $_SESSION['user_id'] ?? null;
     const CURRENT_ROLE = <?php echo json_encode($currentRole); ?>;
     const CURRENT_USER_ID = <?php echo json_encode($currentUserId); ?>;
   </script>
-  <script src="assets/js/chat.js"></script>
+  <script src="<?php echo asset('assets/js/chat.js'); ?>"></script>
 <?php endif; ?>

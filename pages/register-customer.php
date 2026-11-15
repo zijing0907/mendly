@@ -32,9 +32,9 @@ $formError = isset($_GET['error'])
 
     <title>Customer Registration | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/auth-header.css">
-    <link rel="stylesheet" href="assets/css/register-customer.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/auth-header.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/register-customer.css'); ?>">
 </head>
 
 <body>
@@ -316,8 +316,8 @@ $formError = isset($_GET['error'])
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="assets/js/main.js"></script>
-<script src="assets/js/register-customer.js"></script>
+<script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+<script src="<?php echo asset('assets/js/register-customer.js'); ?>"></script>
 
 </body>
 </html>

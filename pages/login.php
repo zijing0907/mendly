@@ -23,8 +23,8 @@ $justDeleted    = isset($_GET['deleted']);
 
     <title>Mendly Login</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/login.css'); ?>">
 </head>
 
 <body>
@@ -138,8 +138,8 @@ $justDeleted    = isset($_GET['deleted']);
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/login.js"></script>
+    <script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+    <script src="<?php echo asset('assets/js/login.js'); ?>"></script>
 
 </body>
 

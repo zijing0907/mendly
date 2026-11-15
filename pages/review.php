@@ -91,8 +91,8 @@ function initials(string $name): string
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Write A Review</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/global.css">
-  <link rel="stylesheet" href="assets/css/review.css">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/review.css'); ?>">
 </head>
 
 <body>
@@ -211,7 +211,7 @@ function initials(string $name): string
     </div>
   </div>
 
-  <script src="assets/js/review.js"></script>
+  <script src="<?php echo asset('assets/js/review.js'); ?>"></script>
 
   <?php include __DIR__ . '/../includes/footer.php'; ?>
 </body>

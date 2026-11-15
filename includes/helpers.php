@@ -45,6 +45,18 @@ function url(string $path = ''): string
     return basePath() . '/' . ltrim($path, '/');
 }
 
+// Link to a CSS or JavaScript file with a version number attached: the
+// time the file last changed, e.g. assets/css/global.css?v=1763240000.
+// When a file is edited its link changes, so browsers download the new
+// copy instead of reusing an old cached one (which once left the new
+// icons unstyled: huge and black).
+function asset(string $path): string
+{
+    $file    = dirname(__DIR__) . '/' . ltrim($path, '/');
+    $version = is_file($file) ? filemtime($file) : 0;
+    return e($path . ($version ? '?v=' . $version : ''));
+}
+
 // Redirect to a project path and stop.
 function redirect(string $path): never
 {

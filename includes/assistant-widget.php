@@ -2,7 +2,7 @@
 // "Ask Mendly" help assistant, included on every page by footer.php.
 // Behaviour is in assets/js/assistant.js, answers come from api/assistant.php.
 ?>
-<link rel="stylesheet" href="assets/css/assistant.css">
+<link rel="stylesheet" href="<?php echo asset('assets/css/assistant.css'); ?>">
 
 <button id="assistantLauncher" class="assistant-launcher" type="button" aria-controls="assistantPanel" aria-expanded="false">
     <span aria-hidden="true">✨</span> Ask Mendly
@@ -35,4 +35,4 @@
     <p class="assistant-note">Answers can be wrong, so please check the service page before you book.</p>
 </section>
 
-<script src="assets/js/assistant.js"></script>
+<script src="<?php echo asset('assets/js/assistant.js'); ?>"></script>

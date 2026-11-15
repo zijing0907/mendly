@@ -154,8 +154,8 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
     <title>Browse Services | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/browse-services.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/browse-services.css'); ?>">
 </head>
 
 <body>
@@ -466,8 +466,8 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="assets/js/browse-services.js"></script>
-<script src="assets/js/favorites.js"></script>
+<script src="<?php echo asset('assets/js/browse-services.js'); ?>"></script>
+<script src="<?php echo asset('assets/js/favorites.js'); ?>"></script>
 
 </body>
 </html>

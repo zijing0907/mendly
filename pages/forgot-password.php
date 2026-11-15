@@ -20,9 +20,9 @@ $linkGenerated = isset($_GET['sent']);
 
     <title>Forgot Password | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/login.css">
-    <link rel="stylesheet" href="assets/css/forgot-password.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/login.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/forgot-password.css'); ?>">
 </head>
 
 <body>
@@ -135,8 +135,8 @@ $linkGenerated = isset($_GET['sent']);
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/forgot-password.js"></script>
+    <script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+    <script src="<?php echo asset('assets/js/forgot-password.js'); ?>"></script>
 
 </body>
 

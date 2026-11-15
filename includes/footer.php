@@ -41,7 +41,7 @@
 
 <!-- Site-wide floating chat widget (only rendered for logged-in users).
      The page that includes this footer closes </body></html> itself. -->
-<link rel="stylesheet" href="assets/css/chat.css">
+<link rel="stylesheet" href="<?php echo asset('assets/css/chat.css'); ?>">
 <?php include __DIR__ . '/chat-widget.php'; ?>
 
 <!-- "Ask Mendly" help assistant, for everyone (guests included) -->

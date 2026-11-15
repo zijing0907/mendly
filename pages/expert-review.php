@@ -89,9 +89,9 @@ function initials(string $name): string
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php echo htmlspecialchars($expert['business_name'] ?: $expert['full_name']); ?> — Reviews | Mendly</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/global.css">
-  <link rel="stylesheet" href="assets/css/review.css">
-  <link rel="stylesheet" href="assets/css/expert-reviews.css">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/review.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset('assets/css/expert-reviews.css'); ?>">
 </head>
 
 <body>

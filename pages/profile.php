@@ -130,8 +130,8 @@ $passwordError   = isset($_GET['password_error'])
 
     <title>My Account | Mendly</title>
 
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/global.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset('assets/css/profile.css'); ?>">
 </head>
 
 <body>
@@ -473,8 +473,8 @@ $passwordError   = isset($_GET['password_error'])
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
 
-<script src="assets/js/main.js"></script>
-<script src="assets/js/profile.js"></script>
+<script src="<?php echo asset('assets/js/main.js'); ?>"></script>
+<script src="<?php echo asset('assets/js/profile.js'); ?>"></script>
 
 </body>
 </html>

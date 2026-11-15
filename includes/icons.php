@@ -32,7 +32,15 @@ function icon(string $name, string $extraClass = ''): string
     }
 
     $class = trim('icon icon-' . $name . ' ' . $extraClass);
-    return '<svg class="' . $class . '" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' . $shapes[$name] . '</svg>';
+    $fill  = strpos($extraClass, 'icon-fill') !== false ? 'currentColor' : 'none';
+
+    // Size and colour are also set as attributes, not only in global.css, so
+    // the icon still looks right if the stylesheet is missing or an old copy
+    // is cached (without them an SVG defaults to huge and solid black).
+    return '<svg class="' . $class . '" viewBox="0 0 24 24" width="1em" height="1em"'
+        . ' fill="' . $fill . '" stroke="currentColor" stroke-width="2"'
+        . ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+        . $shapes[$name] . '</svg>';
 }
 
 // "Alex Tan" -> "AT". Used for profile pictures when someone hasn't
