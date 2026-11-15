@@ -78,10 +78,15 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 1. Copy this folder into `htdocs/` (for example `htdocs/mendly`).
 2. Start **Apache** and **MySQL** in the XAMPP control panel.
 3. Open phpMyAdmin → **Import** → run `database/mendly-schema.sql`, then `database/mendly-data.sql`.
-4. Visit <http://localhost/mendly/>.
+4. **macOS / Linux only:** let Apache save uploaded photos with `chmod 777 uploads`. On these systems Apache
+   runs as a different user from you.
+5. Visit <http://localhost/mendly/>.
 
 The default settings match XAMPP (host `localhost`, port `3306`, user `root`, empty password). If yours
-differ, copy `.env.example` to `.env` and edit it.
+differ, copy `.env.example` to `.env` and edit it. The root `.htaccess` stops Apache from serving `.env`.
+
+> Using the PHP built-in server with XAMPP's MySQL on a Mac? Set `DB_HOST=127.0.0.1` in `.env`, because
+> `localhost` makes PHP look for a MySQL socket file in the wrong place.
 
 ### Option B: PHP built-in server
 
