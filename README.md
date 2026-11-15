@@ -1,9 +1,10 @@
 # Mendly — craft repair marketplace
 
-![CI](../../actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/zijing0907/mendly/actions/workflows/ci.yml/badge.svg)](https://github.com/zijing0907/mendly/actions/workflows/ci.yml)
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8%20%2F%20MariaDB-4479A1?logo=mysql&logoColor=white)
 ![No frameworks](https://img.shields.io/badge/frameworks-none-a98885)
+![License: All rights reserved](https://img.shields.io/badge/license-all%20rights%20reserved-lightgrey)
 
 Mendly connects people who want to **repair rather than replace** their belongings with independent repair
 artisans in Malaysia: tailors, cobblers, book binders, plushie "doctors" and leather workers. Customers browse
@@ -154,7 +155,7 @@ Also: `password_resets` (one-time reset tokens), `inquiries` (contact form) and 
 ## Post-submission improvements
 
 After the course ended I audited the codebase and fixed the problems that only show up when all the pages run
-together. The full list is in the [commit history](../../commits). Highlights:
+together. The full list is in the [commit history](https://github.com/zijing0907/mendly/commits/main). Highlights:
 
 - **Fake login:** a leftover debug file logged *every* visitor in as a demo customer. It loaded because of how
   PHP resolves relative `include` paths.
@@ -172,3 +173,10 @@ together. The full list is in the [commit history](../../commits). Highlights:
 Mendly was built as a four-person group assignment for **UECS2194 Web Application Development** at
 Universiti Tunku Abdul Rahman (UTAR), 2026. The original team repository is
 [wanxi31/WAD_Asgmt](https://github.com/wanxi31/WAD_Asgmt).
+
+## License
+
+Copyright © 2026 Zijing and the Mendly project team. **All rights reserved.**
+
+This code is public for portfolio viewing only. It is not open source: please don't copy it or reuse it,
+including as coursework, without permission. See [LICENSE](LICENSE).
