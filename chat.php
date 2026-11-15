@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // The widget needs to know whether the logged-in person is a customer or
 // an expert, so chat.js can tell "me" bubbles from "them" bubbles.
-$currentRole   = $_SESSION['user_role'] ?? null;
+$currentRole   = isset($_SESSION['user_id']) ? ($_SESSION['role'] ?? null) : null;
 $currentUserId = $_SESSION['user_id'] ?? null;
 ?>
 <?php if ($currentRole): ?>

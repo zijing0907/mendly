@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 1. 过滤与接收数据
+// 1. Read and clean the submitted fields
 $fullName    = trim($_POST['full_name'] ?? '');
 $email       = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
 $subjectType = trim($_POST['subject_type'] ?? '');
@@ -18,10 +18,10 @@ if (empty($fullName) || empty($email) || empty($subjectType) || empty($message))
     exit;
 }
 
-// 2. 自动识别 User Type (Customer / Expert / Guest)
+// 2. Work out who sent it (Customer / Expert / Guest) from the email
 $userType = 'Guest';
 
-// 检查是否在 Customers 表中
+// Registered customer?
 $stmtCustomer = mysqli_prepare($conn, "SELECT customer_id FROM customers WHERE email = ?");
 mysqli_stmt_bind_param($stmtCustomer, 's', $email);
 mysqli_stmt_execute($stmtCustomer);
@@ -32,7 +32,7 @@ if (mysqli_stmt_num_rows($stmtCustomer) > 0) {
 }
 mysqli_stmt_close($stmtCustomer);
 
-// 如果不是 Customer，检查是否在 Experts 表中
+// Otherwise, registered expert?
 if ($userType === 'Guest') {
     $stmtExpert = mysqli_prepare($conn, "SELECT expert_id FROM experts WHERE email = ?");
     mysqli_stmt_bind_param($stmtExpert, 's', $email);
@@ -45,7 +45,7 @@ if ($userType === 'Guest') {
     mysqli_stmt_close($stmtExpert);
 }
 
-// 3. 插入 Inquiries 数据库表
+// 3. Save it to the inquiries table
 $insertStmt = mysqli_prepare(
     $conn,
     "INSERT INTO inquiries (full_name, email, user_type, subject_type, message) VALUES (?, ?, ?, ?, ?)"

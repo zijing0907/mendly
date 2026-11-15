@@ -1,5 +1,8 @@
+-- Mendly database schema. Import this first, then mendly-data.sql.
+-- Works on MySQL 8+ and on the MariaDB bundled with XAMPP.
+SET NAMES utf8mb4;
 DROP DATABASE IF EXISTS mendly_db;
-CREATE DATABASE mendly_db;
+CREATE DATABASE mendly_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE mendly_db;
 
 -- ============================================================
@@ -63,10 +66,15 @@ CREATE TABLE experts (
 -- Services catalogue
 -- ============================================================
 
+-- category_group buckets each category under one of the three sections
+-- shown on the home page and the Experts page. image_path is the
+-- category's cover photo, also used as a fallback thumbnail for any
+-- service that has no photos of its own yet.
 CREATE TABLE categories (
-    category_id   INT AUTO_INCREMENT PRIMARY KEY,
-    category_name VARCHAR(100) NOT NULL,
-    icon          VARCHAR(255)
+    category_id    INT AUTO_INCREMENT PRIMARY KEY,
+    category_name  VARCHAR(100) NOT NULL,
+    category_group ENUM('textiles', 'toys', 'leather') NOT NULL,
+    image_path     VARCHAR(255)
 );
 
 CREATE TABLE services (
@@ -227,3 +235,30 @@ CREATE TABLE IF NOT EXISTS review_media (
 );
  
 CREATE INDEX idx_review_media_review ON review_media(review_id);
+
+-- ============================================================
+-- Contact form inquiries + admin accounts
+-- ============================================================
+
+-- One row per message sent through the Contact page. user_type is worked
+-- out from the email address at submit time (registered customer, expert,
+-- or guest). Admins move status along from admin/inquiries.php.
+CREATE TABLE inquiries (
+    inquiry_id   INT AUTO_INCREMENT PRIMARY KEY,
+    full_name    VARCHAR(100) NOT NULL,
+    email        VARCHAR(100) NOT NULL,
+    user_type    ENUM('Guest', 'Customer', 'Expert') NOT NULL DEFAULT 'Guest',
+    subject_type ENUM('Suggestion', 'Complaint', 'Question') NOT NULL,
+    message      TEXT NOT NULL,
+    status       ENUM('Pending', 'In Progress', 'Resolved') NOT NULL DEFAULT 'Pending',
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Staff accounts for the admin area. Kept separate from customers/experts
+-- so a normal account can never be promoted to admin by mistake.
+CREATE TABLE admins (
+    admin_id   INT AUTO_INCREMENT PRIMARY KEY,
+    username   VARCHAR(50) NOT NULL UNIQUE,
+    password   VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

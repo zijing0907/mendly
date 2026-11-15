@@ -1,24 +1,14 @@
 <?php
     session_start();
 
-    // Wishlist is a customer-only feature — send everyone else somewhere sensible
-    if (! isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-    }
-
-    if (($_SESSION['role'] ?? '') !== 'customer') {
-    header('Location: profile.php');
-    exit;
-    }
-
     include "includes/db.php";
 
-    $customerId = (int) $_SESSION['user_id'];
+    // Wishlist is a customer-only feature
+    $customerId = requireRole('customer');
 
     $sql = "SELECT f.favorite_id, s.service_id, s.title, s.starting_price, s.estimated_duration,
     e.full_name AS expert_name, e.location, c.category_id, c.category_name,
-    (SELECT image_path FROM service_images WHERE service_id = s.service_id ORDER BY display_order LIMIT 1) AS thumbnail,
+    COALESCE((SELECT image_path FROM service_images WHERE service_id = s.service_id ORDER BY display_order LIMIT 1), c.image_path) AS thumbnail,
     review_summary.average_rating, COALESCE(review_summary.total_reviews, 0) AS total_reviews
     FROM favorites f
     INNER JOIN services s ON f.service_id = s.service_id
@@ -57,7 +47,7 @@
 
 <body>
 
-<?php include "header.php"; ?>
+<?php include "includes/header.php"; ?>
 
 <main class="wishlist-container">
 
@@ -102,7 +92,7 @@
             >
                 <div class="card-image">
                     <img
-                        src="<?php echo htmlspecialchars($row['thumbnail'] ?: 'assets/images/placeholder.jpg'); ?>"
+                        src="<?php echo htmlspecialchars($row['thumbnail'] ?: 'assets/images/logo.png'); ?>"
                         alt="<?php echo htmlspecialchars($row['title']); ?>"
                     >
 
@@ -121,7 +111,8 @@
                     <p class="expert-name">◎ <?php echo htmlspecialchars($row['expert_name']); ?></p>
 
                     <div class="meta-row">
-                        <span class="stars">★★★★★</span>
+                        <?php $stars = (int) round($row['average_rating'] ?? 0); ?>
+                        <span class="stars"><?php echo str_repeat('★', $stars) . str_repeat('☆', 5 - $stars); ?></span>
                         <span>
                             <?php echo $row['average_rating'] === null ? 'New' : number_format($row['average_rating'], 1) . ' (' . $row['total_reviews'] . ')'; ?>
                         </span>
@@ -151,7 +142,7 @@
 
 <div class="wishlist-toast" id="wishlistToast">Removed from wishlist</div>
 
-<?php include "footer.php"; ?>
+<?php include "includes/footer.php"; ?>
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/wishlist.js"></script>

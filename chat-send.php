@@ -7,14 +7,14 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'], $_SESSION['user_role'])) {
+if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
   http_response_code(401);
   echo json_encode(['error' => 'Not logged in']);
   exit;
 }
 
 $userId = (int) $_SESSION['user_id'];
-$role   = $_SESSION['user_role'];
+$role   = $_SESSION['role'] === 'expert' ? 'expert' : 'customer';
 
 $input = json_decode(file_get_contents('php://input'), true) ?? [];
 $text           = trim($input['text'] ?? '');
@@ -48,6 +48,18 @@ if ($conversationId) {
   }
   $customerId = $role === 'customer' ? $userId : $targetId;
   $expertId   = $role === 'expert'   ? $userId : $targetId;
+
+  // Make sure the other person actually exists before opening a thread
+  $otherTable = $role === 'customer' ? 'experts' : 'customers';
+  $otherCol   = $role === 'customer' ? 'expert_id' : 'customer_id';
+  $targetStmt = prepareOrFail($conn, "SELECT $otherCol FROM $otherTable WHERE $otherCol = ?");
+  mysqli_stmt_bind_param($targetStmt, 'i', $targetId);
+  mysqli_stmt_execute($targetStmt);
+  if (!mysqli_fetch_assoc(mysqli_stmt_get_result($targetStmt))) {
+    http_response_code(404);
+    echo json_encode(['error' => 'That account no longer exists']);
+    exit;
+  }
 
   // Reuses the existing conversation if this pair already has one.
   $insertConvoStmt = prepareOrFail($conn, "INSERT INTO conversations (customer_id, expert_id) VALUES (?, ?)

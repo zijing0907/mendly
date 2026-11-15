@@ -21,7 +21,19 @@ const CHECK_SINGLE = '<svg width="14" height="14" viewBox="0 0 16 15" fill="none
 const CHECK_DOUBLE = '<svg width="16" height="14" viewBox="0 0 18 14" fill="none"><path d="M1 7l4 4L14 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 7l4 4L19 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function initials(name) {
-  return name.split(" ").map(w => w[0]).join("").toUpperCase();
+  return name.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+}
+
+// Everything that comes from the database (names, message text) is escaped
+// before it goes anywhere near innerHTML, so a message can't inject HTML or
+// script into the other person's page.
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // MySQL TIMESTAMP columns come back as "YYYY-MM-DD HH:MM:SS" (no timezone
@@ -96,10 +108,10 @@ function renderList() {
       const div = document.createElement("div");
       div.className = "contact" + (c.conversation_id === activeId ? " active" : "");
       div.innerHTML = `
-        <div class="avatar">${initials(c.contact_name)}</div>
+        <div class="avatar">${escapeHtml(initials(c.contact_name))}</div>
         <div class="info">
-          <div class="name">${c.contact_name}</div>
-          <div class="preview">${c.last_message ?? ""}</div>
+          <div class="name">${escapeHtml(c.contact_name)}</div>
+          <div class="preview">${escapeHtml(c.last_message ?? "📎 Attachment")}</div>
         </div>
         ${c.unread_count > 0 ? '<div class="dot"></div>' : ""}
       `;
@@ -119,8 +131,8 @@ function renderList() {
 
 function renderConvHeader(convo) {
   convHeader.innerHTML = convo
-    ? `<div class="avatar">${initials(convo.contact_name)}</div>
-       <div class="conv-header-name">${convo.contact_name}</div>`
+    ? `<div class="avatar">${escapeHtml(initials(convo.contact_name))}</div>
+       <div class="conv-header-name">${escapeHtml(convo.contact_name)}</div>`
     : "";
 }
 

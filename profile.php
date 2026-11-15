@@ -132,7 +132,7 @@ $passwordError   = isset($_GET['password_error'])
 
 <body>
 
-<?php include("header.php"); ?>
+<?php include("includes/header.php"); ?>
 
 <main class="profile-container">
 
@@ -464,7 +464,7 @@ $passwordError   = isset($_GET['password_error'])
 
 </main>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/profile.js"></script>

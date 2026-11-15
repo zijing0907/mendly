@@ -1,11 +1,8 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/helpers.php';
 
 $isLoggedIn = isset($_SESSION['user_id']);
-$role       = $_SESSION['role'] ?? 'guest';
-$fullName   = $_SESSION['full_name'] ?? 'User';
+$role       = currentRole();
 ?>
 
 <header class="main-header">
@@ -17,7 +14,13 @@ $fullName   = $_SESSION['full_name'] ?? 'User';
                 <img src="assets/images/logo.png" alt="Mendly Logo" class="logo" title="Mendly Logo">
             </a>
         </div>
-        <?php include("nav.php"); ?>
+        <?php
+        // __DIR__ makes sure we always load includes/nav.php. A bare
+        // include("nav.php") is resolved against the current working
+        // directory first, which is how a stray test nav.php in the project
+        // root used to get loaded instead.
+        include __DIR__ . '/nav.php';
+        ?>
     </div>
 </header>
 <script src="assets/js/header.js"></script>

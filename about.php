@@ -1,4 +1,5 @@
 <?php
+require_once 'includes/helpers.php';
 $currentPage = 'about';
 $pageTitle = "About Us — Mendly";
 ?>

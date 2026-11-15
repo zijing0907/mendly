@@ -2,10 +2,24 @@
 session_start();
 require_once __DIR__ . '/../includes/db.php';
 
-// 处理状态更新
+// Admins only. This page lists every contact-form message with the
+// sender's name and email, so it must never be reachable anonymously.
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$allowedStatuses = ['Pending', 'In Progress', 'Resolved'];
+
+// Status update from the per-row form
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-    $inquiryId = (int)$_POST['inquiry_id'];
-    $newStatus = $_POST['status'];
+    $inquiryId = (int) ($_POST['inquiry_id'] ?? 0);
+    $newStatus = $_POST['status'] ?? '';
+
+    if (!in_array($newStatus, $allowedStatuses, true)) {
+        header("Location: inquiries.php");
+        exit;
+    }
 
     $updateStmt = mysqli_prepare($conn, "UPDATE inquiries SET status = ? WHERE inquiry_id = ?");
     mysqli_stmt_bind_param($updateStmt, "si", $newStatus, $inquiryId);
@@ -16,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     exit;
 }
 
-// 处理类型筛选 (Suggestion / Complaint / Question)
+// Optional filter by subject (Suggestion / Complaint / Question)
 $filterType = $_GET['type'] ?? 'All';
 if ($filterType !== 'All' && in_array($filterType, ['Suggestion', 'Complaint', 'Question'])) {
     $stmt = mysqli_prepare($conn, "SELECT * FROM inquiries WHERE subject_type = ? ORDER BY created_at DESC");
@@ -33,6 +47,7 @@ if ($filterType !== 'All' && in_array($filterType, ['Suggestion', 'Complaint', '
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Inquiry Management</title>
     <style>
         body {
@@ -144,15 +159,51 @@ if ($filterType !== 'All' && in_array($filterType, ['Suggestion', 'Complaint', '
             border-radius: 4px;
             cursor: pointer;
         }
+
+        .admin-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .admin-bar a {
+            color: #4a69bd;
+        }
+
+        .notice {
+            padding: 10px 14px;
+            border-radius: 4px;
+            background: #e6f6ec;
+            color: #1e7b40;
+        }
+
+        @media (max-width: 760px) {
+            body {
+                margin: 12px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="container">
-        <h2>Admin Center: Customer & Expert Inquiries</h2>
+        <div class="admin-bar">
+            <h2>Admin Center: Customer &amp; Expert Inquiries</h2>
+            <span>Signed in as <strong><?= htmlspecialchars($_SESSION['admin_username'] ?? 'admin') ?></strong> &middot; <a href="logout.php">Log out</a></span>
+        </div>
 
-        <!-- 筛选工具栏 -->
+        <?php if (isset($_GET['updated'])): ?>
+            <p class="notice">Status updated.</p>
+        <?php endif; ?>
+
         <div class="filters">
             <strong>Filter Subject: </strong>
             <a href="inquiries.php?type=All" class="filter-btn <?= $filterType === 'All' ? 'active' : '' ?>">All</a>
@@ -161,7 +212,6 @@ if ($filterType !== 'All' && in_array($filterType, ['Suggestion', 'Complaint', '
             <a href="inquiries.php?type=Question" class="filter-btn <?= $filterType === 'Question' ? 'active' : '' ?>">Questions</a>
         </div>
 
-        <!-- 数据列表 -->
         <table>
             <thead>
                 <tr>
@@ -185,14 +235,14 @@ if ($filterType !== 'All' && in_array($filterType, ['Suggestion', 'Complaint', '
                             </td>
                             <td>
                                 <span class="badge role-<?= strtolower($row['user_type']) ?>">
-                                    <?= $row['user_type'] ?>
+                                    <?= htmlspecialchars($row['user_type']) ?>
                                 </span>
                             </td>
                             <td><strong><?= htmlspecialchars($row['subject_type']) ?></strong></td>
                             <td style="max-width: 300px;"><?= nl2br(htmlspecialchars($row['message'])) ?></td>
                             <td>
                                 <span class="badge status-<?= str_replace(' ', '-', $row['status']) ?>">
-                                    <?= $row['status'] ?>
+                                    <?= htmlspecialchars($row['status']) ?>
                                 </span>
                             </td>
                             <td>

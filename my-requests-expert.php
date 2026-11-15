@@ -6,21 +6,25 @@
 
 session_start();
 
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'expert') {
-  header('Location: login.php');
-  exit;
-}
-
 include("includes/db.php");
 
-$expertId = (int) $_SESSION['user_id'];
+$expertId    = requireRole('expert');
+$currentPage = 'expert_requests';
 
 $sql = "SELECT rq.request_id, rq.item_name, rq.brand, rq.repair_description,
                rq.additional_notes, rq.status, rq.request_date,
                c.full_name AS customer_name, s.title AS service_title,
-               (SELECT image_path FROM request_images WHERE request_id = rq.request_id ORDER BY display_order LIMIT 1) AS thumbnail
+               rq.quoted_price,
+               -- The customer's own photo of the item if they uploaded one,
+               -- otherwise the service / category photo
+               COALESCE(
+                 (SELECT image_path FROM request_images WHERE request_id = rq.request_id ORDER BY display_order LIMIT 1),
+                 (SELECT image_path FROM service_images WHERE service_id = s.service_id ORDER BY display_order LIMIT 1),
+                 cat.image_path
+               ) AS thumbnail
         FROM repair_requests rq
         INNER JOIN services s ON rq.service_id = s.service_id
+        INNER JOIN categories cat ON s.category_id = cat.category_id
         INNER JOIN customers c ON rq.customer_id = c.customer_id
         WHERE s.expert_id = ?
         ORDER BY (rq.status IN ('Completed', 'Cancelled')) ASC, rq.request_date DESC";
@@ -55,7 +59,7 @@ $nextSteps = [
 
 <body>
 
-  <?php include("header.php"); ?>
+  <?php include("includes/header.php"); ?>
 
   <main class="requests-container">
 
@@ -81,7 +85,7 @@ $nextSteps = [
 
           <img
             class="request-thumb"
-            src="<?php echo htmlspecialchars($req['thumbnail'] ?: 'assets/images/placeholder.jpg'); ?>"
+            src="<?php echo htmlspecialchars($req['thumbnail'] ?: 'assets/images/logo.png'); ?>"
             alt="<?php echo htmlspecialchars($req['item_name']); ?>">
 
           <div class="request-body">
@@ -122,7 +126,7 @@ $nextSteps = [
 
   </main>
 
-  <?php include("footer.php"); ?>
+  <?php include("includes/footer.php"); ?>
 
   <script src="assets/js/my-requests-expert.js"></script>
 

@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/helpers.php';
+
 $errorMessages = [
     'missing_fields'     => 'Please fill in all required fields.',
     'weak_password'      => 'Password must contain at least 6 characters.',
@@ -33,8 +35,7 @@ $formError = isset($_GET['error'])
 
 <body>
 
-<?php include("header-auth.php"); ?>
-<?php include("nav-drawer.php"); ?>
+<?php include("includes/header.php"); ?>
 
 <main class="registration-container">
 
@@ -308,7 +309,7 @@ $formError = isset($_GET['error'])
 
 </main>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/register-customer.js"></script>

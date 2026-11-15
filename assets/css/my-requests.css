@@ -14,7 +14,7 @@
   margin-bottom: 5px;
 }
 
-/* 成功提交时的 Alert 提示框 */
+/* Success alert after submitting */
 .alert-success {
   background-color: #d4edda;
   color: #155724;
@@ -25,7 +25,7 @@
   font-size: 0.95rem;
 }
 
-/* Requests 列表卡片 */
+/* Request cards */
 .request-card {
   background-color: var(--color-light, #fff);
   border: 1px solid rgba(169, 136, 133, 0.25);
@@ -59,7 +59,7 @@
   font-size: 1rem;
 }
 
-/* Status Badge 样式 */
+/* Status badges */
 .status-badge {
   padding: 6px 14px;
   border-radius: 20px;
@@ -135,7 +135,7 @@
   color: #333;
 }
 
-/* 空状态 Empty State */
+/* Empty state */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -182,4 +182,62 @@
     align-items: flex-start;
     gap: 10px;
   }
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+/* Per-request actions: view service, review, cancel */
+.request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.request-actions form {
+  margin: 0;
+}
+
+.btn-link {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid var(--color-dark, #4a3735);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-dark, #4a3735);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  background-color: var(--color-light, #f9f6f0);
+}
+
+.btn-link-solid {
+  background-color: var(--color-dark, #4a3735);
+  color: #fff;
+}
+
+.btn-link-solid:hover {
+  background-color: #362826;
+}
+
+.btn-link-danger {
+  border-color: #b23b3b;
+  color: #b23b3b;
+}
+
+.btn-link-danger:hover {
+  background-color: #fbeaea;
 }

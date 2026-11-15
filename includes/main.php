@@ -1,9 +1,33 @@
 <main id="main-content">
     <div class="main-container">
 
+        <!-- Hero: what Mendly is, plus a quick search into Browse Services -->
+        <section class="home-hero">
+            <div class="hero-copy">
+                <p class="hero-eyebrow">Malaysia's craft repair marketplace</p>
+                <h1>Repair, don't replace.</h1>
+                <p class="hero-lead">
+                    Find skilled local artisans to restore the things you love — from heirloom
+                    cheongsams and childhood teddy bears to vintage books and leather bags.
+                </p>
+
+                <form class="hero-search" action="browse-services.php" method="get" role="search">
+                    <label for="heroSearch" class="visually-hidden">Search repair services</label>
+                    <input id="heroSearch" type="search" name="search" placeholder="What needs fixing? e.g. bag, shoes, doll">
+                    <button type="submit">Search</button>
+                </form>
+
+                <div class="hero-actions">
+                    <a href="browse-services.php" class="hero-btn hero-btn-solid">Browse all services</a>
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                        <a href="register-expert.php" class="hero-btn hero-btn-outline">Join as a repair expert</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </section>
+
         <!-- ================= CATEGORY 1: TEXTILES & APPAREL ================= -->
         <section class="category-section">
-            <!-- 纯 Category 标识 Banner (无链接/不可点击) -->
             <div class="category-banner">
                 <div class="banner-content">
                     <h2>Textiles & Apparel Restoration</h2>
@@ -27,7 +51,7 @@
                 <!-- Sub 1.2 -->
                 <div class="service-card" onclick="location.href='browse-services.php?category[]=2';">
                     <div class="card-img-wrapper">
-                        <img src="assets/images/services/traditional-wear.png" alt="Cultural & Traditional Wear Restoration" class="card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <img src="assets/images/services/traditional-wear.jpg" alt="Cultural & Traditional Wear Restoration" class="card-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <div class="img-placeholder" style="display:none;">Cultural & Traditional Wear</div>
                     </div>
                     <div class="card-body">

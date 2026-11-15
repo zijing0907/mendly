@@ -7,15 +7,15 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 header('Content-Type: application/json');
 
-// Assumes login sets $_SESSION['user_id'] and $_SESSION['user_role'] ('customer' | 'expert').
-if (!isset($_SESSION['user_id'], $_SESSION['user_role'])) {
+// process-login.php sets $_SESSION['user_id'] and $_SESSION['role'] ('customer' | 'expert').
+if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
   http_response_code(401);
   echo json_encode(['error' => 'Not logged in']);
   exit;
 }
 
 $userId = (int) $_SESSION['user_id'];
-$role   = $_SESSION['user_role'];
+$role   = $_SESSION['role'] === 'expert' ? 'expert' : 'customer';
 
 $action = $_GET['action'] ?? 'list';
 
@@ -23,7 +23,6 @@ $action = $_GET['action'] ?? 'list';
 if ($action === 'list') {
   if ($role === 'customer') {
     $sql = "SELECT c.conversation_id, e.expert_id AS contact_id, e.full_name AS contact_name,
-                       e.avatar AS contact_avatar,
                        (SELECT message_text FROM messages m
                           WHERE m.conversation_id = c.conversation_id
                           ORDER BY m.sent_at DESC LIMIT 1) AS last_message,
@@ -36,7 +35,6 @@ if ($action === 'list') {
                 ORDER BY c.last_message_at DESC";
   } else {
     $sql = "SELECT c.conversation_id, cu.customer_id AS contact_id, cu.full_name AS contact_name,
-                       cu.avatar AS contact_avatar,
                        (SELECT message_text FROM messages m
                           WHERE m.conversation_id = c.conversation_id
                           ORDER BY m.sent_at DESC LIMIT 1) AS last_message,

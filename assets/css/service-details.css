@@ -929,3 +929,27 @@ body {
     gap: 18px;
   }
 }
+
+.expert-note {
+  margin-bottom: 24px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--color-light, #f9f6f0);
+  color: var(--color-subtle-dark, #7a6260);
+  font-size: 0.9rem;
+}
+
+.all-reviews-link {
+  margin-bottom: 16px;
+}
+
+.all-reviews-link a {
+  color: var(--color-dark, #4a3735);
+  font-weight: 600;
+}
+
+/* profile-btn is now a link to the expert's services */
+a.profile-btn {
+  display: inline-block;
+  text-decoration: none;
+}

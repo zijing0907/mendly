@@ -4,7 +4,7 @@
   padding: 0 20px;
 }
 
-/* 顶部 Header */
+/* Page header */
 .page-header {
   text-align: center;
   margin-bottom: 35px;
@@ -22,7 +22,7 @@
   font-size: 1rem;
 }
 
-/* 专属分类导航 (Horizontal Category Nav) */
+/* Category tabs */
 .expert-category-nav {
   display: flex;
   justify-content: center;
@@ -53,7 +53,7 @@
   box-shadow: 0 4px 12px rgba(74, 55, 53, 0.15);
 }
 
-/* 专家 Horizontal 卡片列表 */
+/* Expert cards */
 .experts-list {
   display: flex;
   flex-direction: column;
@@ -166,6 +166,22 @@
 .card-footer {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-view-reviews {
+  padding: 10px 18px;
+  border: 1px solid var(--color-dark, #4a3735);
+  border-radius: 8px;
+  color: var(--color-dark, #4a3735);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-view-reviews:hover {
+  background-color: var(--color-light, #f9f6f0);
 }
 
 .btn-view-services {
@@ -194,7 +210,7 @@
   color: #777;
 }
 
-/* 响应式适配 */
+/* Responsive */
 @media (max-width: 768px) {
   .expert-card {
     flex-direction: column;
@@ -212,11 +228,14 @@
   }
 
   .card-footer {
-    justify-content: stretch;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .btn-view-services {
+  .btn-view-services,
+  .btn-view-reviews {
     width: 100%;
     justify-content: center;
+    text-align: center;
   }
 }

@@ -5,21 +5,19 @@ $pageTitle = "Submit Repair Request";
 
 include 'includes/db.php';
 
-/*
-|--------------------------------------------------------------------------
-| Temporary Login (Development Only)
-|--------------------------------------------------------------------------
-*/
-$customerID = 1;
+// Only signed-in customers can submit requests. Guests are sent to log in,
+// experts back to the service page (they can't hire other experts).
+if (!isset($_SESSION['user_id'])) {
+  header("Location: login.php");
+  exit();
+}
 
-/*
-    if (! isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-    }
+if (currentRole() !== 'customer') {
+  header("Location: service-details.php?id=" . (int) ($_GET['service'] ?? 0));
+  exit();
+}
 
-    $customerID = (int) $_SESSION['user_id'];
-*/
+$customerID = (int) $_SESSION['user_id'];
 
 /*
 |--------------------------------------------------------------------------
@@ -45,21 +43,24 @@ $sql = "
         s.description,
         s.starting_price,
         s.estimated_duration,
-        u.user_id,
-        u.full_name,
-        u.location,
+        e.expert_id,
+        e.full_name,
+        e.location,
         c.category_name,
-        (
-            SELECT image_path
-            FROM service_images
-            WHERE service_id = s.service_id
-            ORDER BY display_order
-            LIMIT 1
+        COALESCE(
+            (
+                SELECT image_path
+                FROM service_images
+                WHERE service_id = s.service_id
+                ORDER BY display_order
+                LIMIT 1
+            ),
+            c.image_path
         ) AS thumbnail,
         review_summary.average_rating,
         COALESCE(review_summary.total_reviews, 0) AS total_reviews
     FROM services s
-    INNER JOIN users u ON s.expert_id = u.user_id
+    INNER JOIN experts e ON s.expert_id = e.expert_id
     INNER JOIN categories c ON s.category_id = c.category_id
     LEFT JOIN (
         SELECT
@@ -70,7 +71,7 @@ $sql = "
         INNER JOIN reviews r ON rq.request_id = r.request_id
         GROUP BY rq.service_id
     ) review_summary ON review_summary.service_id = s.service_id
-    WHERE s.service_id = ?
+    WHERE s.service_id = ? AND s.status = 'active'
 ";
 
 $stmt = mysqli_prepare($conn, $sql);
@@ -95,8 +96,10 @@ $brand             = "";
 $repairDescription = "";
 $additionalNotes   = "";
 
-$errors  = [];
-$success = false;
+$errors = [];
+
+// Validated uploads waiting to be moved into place: [tmp path, safe extension]
+$pendingImages = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -113,19 +116,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors[] = "Repair description is required.";
   }
 
-  if (isset($_FILES['reference_images'])) {
+  if (isset($_FILES['reference_images']) && is_array($_FILES['reference_images']['name'])) {
 
     $totalFiles = count(array_filter($_FILES['reference_images']['name']));
 
     if ($totalFiles > 5) {
       $errors[] = "You can upload a maximum of 5 images.";
     }
-
-    $allowedTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-    ];
 
     foreach ($_FILES['reference_images']['tmp_name'] as $index => $tmpName) {
 
@@ -140,31 +137,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       if ($_FILES['reference_images']['size'][$index] > 5 * 1024 * 1024) {
         $errors[] = "Each image must not exceed 5MB.";
+        continue;
       }
 
-      $mimeType = mime_content_type($tmpName);
+      // Read the real image type from the file's bytes and pick the
+      // extension ourselves. The original filename is never trusted:
+      // keeping it would let someone upload "photo.php" and run it.
+      $extension = safeImageExtension($tmpName);
 
-      if (! in_array($mimeType, $allowedTypes)) {
+      if ($extension === null) {
         $errors[] = "Only JPG, PNG and WEBP images are allowed.";
+        continue;
       }
+
+      $pendingImages[] = [$tmpName, $extension];
     }
   }
 
   if (empty($errors)) {
     $sql = "
         INSERT INTO repair_requests
-        (
-            customer_id,
-            service_id,
-            item_name,
-            brand,
-            repair_description,
-            additional_notes
-        )
-        VALUES
-        (
-            ?, ?, ?, ?, ?, ?
-        )
+            (customer_id, service_id, item_name, brand, repair_description, additional_notes)
+        VALUES (?, ?, ?, ?, ?, ?)
         ";
 
     $stmt = mysqli_prepare($conn, $sql);
@@ -181,65 +175,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if (! mysqli_stmt_execute($stmt)) {
-      $errors[] = "Unable to submit repair request.";
+      $errors[] = "Unable to submit repair request. Please try again.";
     } else {
       $requestID = mysqli_insert_id($conn);
-    }
 
-    if ($requestID && isset($_FILES['reference_images'])) {
-      $uploadDir = "uploads/request-images/";
+      if ($pendingImages) {
+        $uploadDir = __DIR__ . "/uploads/request-images/";
 
-      if (! is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-      }
-
-      foreach ($_FILES['reference_images']['tmp_name'] as $index => $tmpName) {
-
-        if ($_FILES['reference_images']['error'][$index] !== UPLOAD_ERR_OK) {
-          continue;
+        if (! is_dir($uploadDir)) {
+          mkdir($uploadDir, 0755, true);
         }
 
-        $extension = strtolower(
-          pathinfo(
-            $_FILES['reference_images']['name'][$index],
-            PATHINFO_EXTENSION
-          )
+        $imageStmt = mysqli_prepare(
+          $conn,
+          "INSERT INTO request_images (request_id, image_path, display_order) VALUES (?, ?, ?)"
         );
 
-        $fileName = uniqid("request_") . "." . $extension;
+        $order = 1;
+        foreach ($pendingImages as [$tmpName, $extension]) {
+          $fileName = 'request_' . $requestID . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
 
-        $destination = $uploadDir . $fileName;
-
-        if (move_uploaded_file($tmpName, $destination)) {
-
-          $imageSQL = "
-                    INSERT INTO request_images
-                    (
-                        request_id,
-                        image_path
-                    )
-                    VALUES
-                    (
-                        ?, ?
-                    )
-                    ";
-
-          $imageStmt = mysqli_prepare($conn, $imageSQL);
-
-          mysqli_stmt_bind_param(
-            $imageStmt,
-            "is",
-            $requestID,
-            $destination
-          );
-
-          mysqli_stmt_execute($imageStmt);
+          if (move_uploaded_file($tmpName, $uploadDir . $fileName)) {
+            $webPath = 'uploads/request-images/' . $fileName;
+            mysqli_stmt_bind_param($imageStmt, "isi", $requestID, $webPath, $order);
+            mysqli_stmt_execute($imageStmt);
+            $order++;
+          }
         }
       }
+
+      // Let the customer know the request landed, in their chat thread
+      // with this expert (same flow update-request-status.php continues).
+      $label = $itemName . ($brand !== '' ? " ({$brand})" : '');
+      sendAutoMessage(
+        $conn,
+        $customerID,
+        (int) $service['expert_id'],
+        "🔔 New repair request received: {$label}.\nStatus: Pending — we'll review your item and get back to you shortly."
+      );
+
+      header("Location: my-requests.php?success=1");
+      exit();
     }
-    $success = true;
-    header("Location: my-requests.php?success=1");
-    exit();
   }
 }
 
@@ -252,17 +229,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submit Repair Request</title>
-  <link rel="stylesheet" href="/assets/css/global.css">
-  <link rel="stylesheet" href="/assets/css/submit-request.css">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/submit-request.css">
 </head>
 
 <body>
 
-  <?php
-  if (file_exists("header.php")) {
-    include "header.php";
-  }
-  ?>
+  <?php include "includes/header.php"; ?>
 
   <main class="submit-request-page">
 
@@ -480,7 +453,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   </main>
 
-  <script src="submit-request.js"></script>
+  <?php include "includes/footer.php"; ?>
+
+  <script src="assets/js/submit-request.js"></script>
 
 </body>
 

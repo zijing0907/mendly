@@ -1,15 +1,9 @@
 <?php
-// Public-ish "all reviews for this expert" page. Anyone logged in
-// (customer or expert) can view it via ?expert_id=<id> — e.g. link to it
-// from a service card, an expert's profile, or the expert's own account
-// page so they can see what's been said about their work.
+// Public "all reviews for this expert" page, reached via ?expert_id=<id>
+// from the Experts page, a service's details page, or (for experts) the
+// "My Reviews" link in their account menu.
 
 session_start();
-
-if (!isset($_SESSION['user_id'])) {
-  header('Location: login.php');
-  exit;
-}
 
 include("includes/db.php");
 
@@ -99,7 +93,7 @@ function initials(string $name): string
 
 <body>
 
-  <?php include("header.php"); ?>
+  <?php include("includes/header.php"); ?>
 
   <div class="page">
     <div class="header" id="header">
@@ -177,7 +171,7 @@ function initials(string $name): string
     </div>
   </div>
 
-  <?php include("footer.php"); ?>
+  <?php include("includes/footer.php"); ?>
 
 </body>
 

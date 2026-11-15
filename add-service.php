@@ -1,22 +1,46 @@
 <?php
 session_start();
 
-// Must be logged in, and must be an expert - customers don't have
-// services to list.
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-if (($_SESSION['role'] ?? '') !== 'expert') {
-    header('Location: index.php');
-    exit;
-}
-
 include("includes/db.php");
+
+// Must be logged in as an expert - customers don't have services to list.
+$expertId    = requireRole('expert');
+$currentPage = 'my_services';
 
 $welcome = isset($_GET['welcome']);
 $added   = isset($_GET['added']);
+
+// ?id=N switches this page into edit mode for one of the expert's own
+// services; the same form and save-service.php handle both cases.
+$editId  = (int) ($_GET['id'] ?? 0);
+$service = [
+    'service_id'         => 0,
+    'category_id'        => 0,
+    'title'              => '',
+    'description'        => '',
+    'starting_price'     => '',
+    'estimated_duration' => '',
+];
+
+if ($editId > 0) {
+    $editStmt = mysqli_prepare(
+        $conn,
+        "SELECT service_id, category_id, title, description, starting_price, estimated_duration
+         FROM services WHERE service_id = ? AND expert_id = ?"
+    );
+    mysqli_stmt_bind_param($editStmt, 'ii', $editId, $expertId);
+    mysqli_stmt_execute($editStmt);
+    $found = mysqli_fetch_assoc(mysqli_stmt_get_result($editStmt));
+    mysqli_stmt_close($editStmt);
+
+    if (!$found) {
+        header('Location: my-services.php?msg=not_found');
+        exit;
+    }
+    $service = $found;
+}
+
+$isEdit = $service['service_id'] > 0;
 
 $errorMessages = [
     'missing_fields'  => 'Please fill in all required fields.',
@@ -44,7 +68,7 @@ mysqli_close($conn);
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Add a Service | Mendly</title>
+    <title><?php echo $isEdit ? 'Edit Service' : 'Add a Service'; ?> | Mendly</title>
 
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/add-service.css">
@@ -52,14 +76,16 @@ mysqli_close($conn);
 
 <body>
 
-<?php include("header.php"); ?>
+<?php include("includes/header.php"); ?>
 
 <main class="add-service-container">
 
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="index.php">Home</a>
         <span>&rsaquo;</span>
-        <span class="breadcrumb-current">Add a Service</span>
+        <a href="my-services.php">My Services</a>
+        <span>&rsaquo;</span>
+        <span class="breadcrumb-current"><?php echo $isEdit ? 'Edit Service' : 'Add a Service'; ?></span>
     </nav>
 
     <div class="add-service-card">
@@ -78,15 +104,17 @@ mysqli_close($conn);
 
                 <div class="success-actions">
                     <a href="add-service.php" class="btn-save-solid">Add Another Service</a>
-                    <a href="index.php" class="btn-save-outline">Go to Home</a>
+                    <a href="my-services.php" class="btn-save-outline">Go to My Services</a>
                 </div>
             </div>
 
         <?php else: ?>
 
-            <h2>Add a Service <span class="heading-leaf">🌿</span></h2>
+            <h2><?php echo $isEdit ? 'Edit Service' : 'Add a Service'; ?> <span class="heading-leaf">🌿</span></h2>
             <p class="add-service-intro">
-                Tell customers what repair service you offer. You can add more services later from your account.
+                <?php echo $isEdit
+                    ? 'Update the details customers see on this listing.'
+                    : 'Tell customers what repair service you offer. You can add more services later from My Services.'; ?>
             </p>
 
             <?php if ($formError): ?>
@@ -94,6 +122,7 @@ mysqli_close($conn);
             <?php endif; ?>
 
             <form action="save-service.php" method="post" novalidate>
+                <input type="hidden" name="serviceId" value="<?php echo (int) $service['service_id']; ?>">
 
                 <div class="form-row">
                     <div class="form-group">
@@ -101,7 +130,7 @@ mysqli_close($conn);
                         <select id="categoryId" name="categoryId">
                             <option value="">Select a category</option>
                             <?php while ($category = mysqli_fetch_assoc($categoryResult)): ?>
-                                <option value="<?php echo (int) $category['category_id']; ?>">
+                                <option value="<?php echo (int) $category['category_id']; ?>" <?php echo (int) $category['category_id'] === (int) $service['category_id'] ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($category['category_name']); ?>
                                 </option>
                             <?php endwhile; ?>
@@ -111,34 +140,34 @@ mysqli_close($conn);
 
                     <div class="form-group">
                         <label for="title">Service Title</label>
-                        <input type="text" id="title" name="title" placeholder="e.g. Luxury Bag Repair">
+                        <input type="text" id="title" name="title" placeholder="e.g. Luxury Bag Repair" value="<?php echo e($service['title']); ?>">
                         <span class="error-message" id="titleError"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea id="description" name="description" rows="4" placeholder="Describe what this service covers"></textarea>
+                    <textarea id="description" name="description" rows="4" placeholder="Describe what this service covers"><?php echo e($service['description']); ?></textarea>
                     <span class="error-message" id="descriptionError"></span>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="startingPrice">Starting Price (RM)</label>
-                        <input type="text" id="startingPrice" name="startingPrice" placeholder="e.g. 80">
+                        <input type="text" id="startingPrice" name="startingPrice" placeholder="e.g. 80" value="<?php echo e($service['starting_price']); ?>">
                         <span class="error-message" id="startingPriceError"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="estimatedDuration">Estimated Duration</label>
-                        <input type="text" id="estimatedDuration" name="estimatedDuration" placeholder="e.g. 3-5 Days">
+                        <input type="text" id="estimatedDuration" name="estimatedDuration" placeholder="e.g. 3-5 Days" value="<?php echo e($service['estimated_duration']); ?>">
                         <span class="error-message" id="estimatedDurationError"></span>
                     </div>
                 </div>
 
                 <div class="add-service-actions">
-                    <button type="submit" class="btn-save-solid">Add Service</button>
-                    <a href="index.php" class="skip-link">Skip for now</a>
+                    <button type="submit" class="btn-save-solid"><?php echo $isEdit ? 'Save Changes' : 'Add Service'; ?></button>
+                    <a href="<?php echo $isEdit ? 'my-services.php' : 'index.php'; ?>" class="skip-link"><?php echo $isEdit ? 'Cancel' : 'Skip for now'; ?></a>
                 </div>
 
             </form>
@@ -149,7 +178,7 @@ mysqli_close($conn);
 
 </main>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/add-service.js"></script>

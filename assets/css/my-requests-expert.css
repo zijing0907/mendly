@@ -154,3 +154,14 @@
         height: 160px;
     }
 }
+/* Update button (btn-solid was only defined in browse-services.css,
+   which this page doesn't load) */
+.btn-solid {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    font-weight: 600;
+    cursor: pointer;
+}

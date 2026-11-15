@@ -1,8 +1,10 @@
 <?php
+require_once 'includes/helpers.php';
+
 $currentPage = 'contact';
 $pageTitle = "Contact Us - Mendly";
 
-// 读取重定向回来的状态 (Status Message)
+// Result passed back from process-inquiry.php (success / empty / error)
 $status = $_GET['status'] ?? '';
 ?>
 
@@ -19,21 +21,21 @@ $status = $_GET['status'] ?? '';
 
 <body>
 
-    <!-- Header 引入 -->
+    <!-- Header -->
     <?php include 'includes/header.php'; ?>
 
     <main id="contact-main">
         <div class="contact-page-container">
 
-            <!-- 居中大标题与副标题 -->
+            <!-- Page title -->
             <div class="page-header">
                 <h1>Contact Us</h1>
             </div>
 
-            <!-- 主内容 Container：左侧联系信息 + 右侧地图 -->
+            <!-- Contact details (left) + map (right) -->
             <div class="contact-info-container">
 
-                <!-- 左半边：业务联系渠道与社交媒体 -->
+                <!-- Left: contact channels and social media -->
                 <div class="contact-details">
                     <div class="info-group">
                         <h2>Our Location & Contact</h2>
@@ -73,7 +75,7 @@ $status = $_GET['status'] ?? '';
 
                     <hr class="info-divider">
 
-                    <!-- 社交媒体与账号名称列表 -->
+                    <!-- Social media accounts -->
                     <div class="social-media-group">
                         <h3>Connect With Us</h3>
                         <ul class="social-list">
@@ -105,7 +107,7 @@ $status = $_GET['status'] ?? '';
                     </div>
                 </div>
 
-                <!-- 右半边：Google Embedded Map -->
+                <!-- Right: embedded Google Map -->
                 <div class="contact-map">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15935.267812984131!2d101.7032223!3d3.1478144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc36284a1e3f87%3A0x62a8747f561917f8!2sBukit%20Bintang%2C%20Kuala%20Lumpur%2C%20Federal%20Territory%20of%20Kuala%20Lumpur!5e0!3m2!1sen!2smy!4v1700000000000!5m2!1sen!2smy"
@@ -120,12 +122,12 @@ $status = $_GET['status'] ?? '';
 
             </div>
 
-            <!-- 询盘表单区域 -->
+            <!-- Inquiry form -->
             <div class="user-inquiry-form-wrapper">
                 <h1>Inquiry Form</h1>
                 <p>Have questions about our repair services or need assistance? We're here to help.</p>
 
-                <!-- 提交成功/失败的动态反馈提示 -->
+                <!-- Feedback after submitting -->
                 <?php if ($status === 'success'): ?>
                     <div class="form-alert alert-success" style="padding: 12px; background: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 20px;">
                         Thank you for reaching out! Your inquiry has been submitted successfully. We will contact you soon.
@@ -140,7 +142,7 @@ $status = $_GET['status'] ?? '';
                     </div>
                 <?php endif; ?>
 
-                <!-- 💡 关键修改：action 设为 process-inquiry.php -->
+                <!-- Submits to process-inquiry.php -->
                 <form action="process-inquiry.php" method="POST" class="inquiry-form">
 
                     <!-- Row 1: Full Name -->
@@ -155,7 +157,7 @@ $status = $_GET['status'] ?? '';
                         <input type="email" id="email" name="email" placeholder="johndoe@example.com" required>
                     </div>
 
-                    <!-- Row 3: Inquiry Category Dropdown (💡 关键修改: name="subject_type", value 为大写) -->
+                    <!-- Row 3: inquiry category (values match the inquiries.subject_type ENUM) -->
                     <div class="form-group full-width">
                         <label for="subject_type">Inquiry Category <span class="required">*</span></label>
                         <select id="subject_type" name="subject_type" required>
@@ -184,7 +186,7 @@ $status = $_GET['status'] ?? '';
         </div>
     </main>
 
-    <!-- Footer 引入 -->
+    <!-- Footer -->
     <?php include 'includes/footer.php'; ?>
 
 </body>

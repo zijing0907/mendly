@@ -1,46 +1,64 @@
 <?php
-// Database configuration
-// Update these if your local MySQL setup is different (e.g. XAMPP default
-// is host 'localhost', user 'root', empty password, port 3306).
-$dbHost     = 'localhost';
-$dbUsername = 'root';
-$dbPassword = '';
-$dbName     = 'mendly_db';
-$dbPort     = 3308; // confirm this matches your actual MySQL port
+require_once __DIR__ . '/helpers.php';
 
-// On PHP 8.1+, mysqli throws an exception on connection failure by
-// default, which skips the friendly die() message below entirely and
-// shows a raw stack trace instead. This restores the old behaviour
-// (mysqli_connect() just returns false on failure, like it always did),
-// so our own error handling actually runs.
-mysqli_report(MYSQLI_REPORT_OFF);
+// ---------------------------------------------------------------------
+// Database configuration
+// ---------------------------------------------------------------------
+// Settings are read from environment variables, or from a .env file in
+// the project root (copy .env.example to .env). Nothing secret lives in
+// source control. The defaults match a stock XAMPP install: localhost,
+// port 3306, user root, empty password.
+function loadEnvFile(string $path): void
+{
+    if (!is_readable($path)) {
+        return;
+    }
+    foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+            continue;
+        }
+        [$key, $value] = array_map('trim', explode('=', $line, 2));
+        $value = trim($value, "\"'");
+        // Real environment variables win over the .env file
+        if (getenv($key) === false) {
+            putenv("$key=$value");
+        }
+    }
+}
+
+loadEnvFile(dirname(__DIR__) . '/.env');
+
+$dbHost     = getenv('DB_HOST') ?: 'localhost';
+$dbPort     = (int) (getenv('DB_PORT') ?: 3306);
+$dbUsername = getenv('DB_USERNAME') ?: 'root';
+$dbPassword = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : '';
+$dbName     = getenv('DB_NAME') ?: 'mendly_db';
 
 // On PHP 8.1+, mysqli throws an exception on connection/query failure by
-// default, which skips any of our own error handling entirely and shows
-// a raw stack trace instead. This restores the old behaviour (mysqli
-// functions just return false on failure, like they always did), so our
-// own error handling actually runs.
+// default, which skips our own error handling and shows a raw stack
+// trace. This restores the classic behaviour (functions return false) so
+// the checks below and in each page actually run.
 mysqli_report(MYSQLI_REPORT_OFF);
 
-// Create a database connection
 $conn = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName, $dbPort);
 
-// Check if the connection was successful
 if (!$conn) {
+    http_response_code(500);
     die(
-        'Could not connect to the database: ' . mysqli_connect_error() . '. '
-        . 'If you are a teammate setting this up locally, check that '
-        . '$dbUsername/$dbPassword in includes/db.php match your own '
-        . 'MySQL root credentials, and that the mendly_db database has '
-        . 'been imported.'
+        'Could not connect to the database: ' . e(mysqli_connect_error()) . '. '
+        . 'Check the DB_* settings in your .env file (see .env.example) and '
+        . 'that database/mendly-schema.sql has been imported.'
     );
 }
+
+// utf8mb4 so emoji in chat messages and reviews survive the round trip
+mysqli_set_charset($conn, 'utf8mb4');
 
 // mysqli_prepare() returns false (not a mysqli_stmt) if the SQL fails to
 // prepare, e.g. a typo in a column/table name. Routing every prepare
 // through this helper means that failure surfaces as a clean JSON error
-// instead of a fatal "call to a member function on false", and it also
-// satisfies editors that flag $stmt as possibly-false.
+// instead of a fatal "call to a member function on false".
 function prepareOrFail(mysqli $conn, string $sql): mysqli_stmt
 {
     $stmt = mysqli_prepare($conn, $sql);
@@ -54,18 +72,18 @@ function prepareOrFail(mysqli $conn, string $sql): mysqli_stmt
 
 // Drops an automated/system message into the customer<->expert
 // conversation tied to a repair request, creating the conversation if this
-// pair doesn't have one yet. Reuses the same "ON DUPLICATE KEY" pattern as
-// chat-send.php's new-conversation branch, so this never creates a
-// duplicate row alongside a conversation the two of them already have from
-// browsing/messaging separately.
+// pair doesn't have one yet. Uses the same "ON DUPLICATE KEY" pattern as
+// chat-send.php, so it never creates a duplicate conversation row.
 //
-// Automated messages are sent as sender_type='expert' since they're
-// notifications about work the expert is doing ("your request is
-// pending", "we've started repairing it", etc). If you'd rather these
-// come from a dedicated "system" sender, you'd need to widen the
-// messages.sender_type ENUM first.
-function sendAutoMessage(mysqli $conn, int $customerId, int $expertId, string $text): int
+// Automated messages are sent as sender_type='expert' by default since
+// they're mostly notifications about work the expert is doing ("your
+// request is pending", "we've started repairing it", etc). Pass
+// 'customer' for notices triggered by the customer, like a cancellation.
+function sendAutoMessage(mysqli $conn, int $customerId, int $expertId, string $text, string $senderType = 'expert'): int
 {
+    $senderType = $senderType === 'customer' ? 'customer' : 'expert';
+    $senderId   = $senderType === 'customer' ? $customerId : $expertId;
+
     $convoStmt = prepareOrFail(
         $conn,
         "INSERT INTO conversations (customer_id, expert_id) VALUES (?, ?)
@@ -78,9 +96,9 @@ function sendAutoMessage(mysqli $conn, int $customerId, int $expertId, string $t
     $msgStmt = prepareOrFail(
         $conn,
         "INSERT INTO messages (conversation_id, sender_type, sender_id, message_text)
-         VALUES (?, 'expert', ?, ?)"
+         VALUES (?, ?, ?, ?)"
     );
-    mysqli_stmt_bind_param($msgStmt, 'iis', $conversationId, $expertId, $text);
+    mysqli_stmt_bind_param($msgStmt, 'isis', $conversationId, $senderType, $senderId, $text);
     mysqli_stmt_execute($msgStmt);
 
     $updateStmt = prepareOrFail(

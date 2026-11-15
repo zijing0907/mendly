@@ -206,7 +206,7 @@
   margin-bottom: 9px;
 }
 
-.filters input:not([type='radio']),
+.filters input:not([type='radio']):not([type='checkbox']),
 .filters select {
   width: 100%;
   padding: 9px 12px;
@@ -223,8 +223,8 @@
   transition: var(--transition-fast);
 }
 
-.filters input:not([type='radio']):hover,
-.filters input:not([type='radio']):focus,
+.filters input:not([type='radio']):not([type='checkbox']):hover,
+.filters input:not([type='radio']):not([type='checkbox']):focus,
 .filters select:hover,
 .filters select:focus {
   border-color: var(--color-medium);

@@ -1,43 +1,50 @@
 -- Mendly sample/testing data
 -- Import this AFTER mendly-schema.sql (needs the tables to already exist).
 
+-- The file contains emoji; make sure the client reads it as UTF-8.
+SET NAMES utf8mb4;
 USE mendly_db;
 
-INSERT INTO categories (category_name, icon) VALUES
-('Leather Repair', 'leather.svg'),
-('Book Restoration', 'book.svg'),
-('Shoe Repair', 'shoe.svg'),
-('Clothing Alteration', 'clothing.svg'),
-('Plushie & Doll Repair', 'doll.svg');
+-- IDs 1-8 line up with the category cards on the home page
+-- (includes/main.php links to browse-services.php?category[]=N).
+INSERT INTO categories (category_id, category_name, category_group, image_path) VALUES
+(1, 'Clothing Alteration & Tailoring', 'textiles', 'assets/images/services/clothing-alteration.jpg'),
+(2, 'Traditional Wear Restoration',    'textiles', 'assets/images/services/traditional-wear.jpg'),
+(3, 'Home Textiles & Furnishing',      'textiles', 'assets/images/services/home-textiles.jpg'),
+(4, 'Plushie & Doll Repair',           'toys',     'assets/images/services/plushie-doctor.jpg'),
+(5, 'Book Restoration',                'toys',     'assets/images/services/book-restoration.jpg'),
+(6, 'Paper Memorabilia & Artwork',     'toys',     'assets/images/services/paper-memorabilia.jpg'),
+(7, 'Bag & Leather Goods',             'leather',  'assets/images/services/bag-refurbishment.jpg'),
+(8, 'Footwear Repair',                 'leather',  'assets/images/services/footwear-repair.jpg');
 
--- Sample password hash below corresponds to a test password used across
--- all sample accounts (set by whoever generated this seed data).
+-- Every sample account (customers, experts and the admin) uses the demo
+-- password ChangeMe!2026 — the hash below is password_hash() of it.
 INSERT INTO experts
 (full_name, email, password, phone, location, business_name, experience,
  description, avatar, bio, years_experience, completed_repairs, response_rate, average_response_time, verified)
 VALUES
 ('Alex Tan', 'alex@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456789', 'Kuala Lumpur',
- 'Alex Tan Leather Studio', '5-10', 'Luxury leather restoration specialist.', 'images/experts/alex.jpg',
+ 'Alex Tan Leather Studio', '5-10', 'Luxury leather restoration specialist.', NULL,
  'Luxury leather restoration specialist.', 8, 312, 98.50, '2 hours', TRUE),
 
 ('Sarah Lim', 'sarah@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456790', 'Selangor',
- 'Sarah Lim Alterations', '10+', 'Professional clothing alteration expert.', 'images/experts/sarah.jpg',
+ 'Sarah Lim Alterations', '10+', 'Professional clothing alteration expert.', NULL,
  'Professional clothing alteration expert.', 10, 486, 99.20, '1 hour', TRUE),
 
 ('Jason Lee', 'jason@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456791', 'Penang',
- 'Jason Lee Book Restoration', '10+', 'Antique book restoration expert.', 'images/experts/jason.jpg',
+ 'Jason Lee Book Restoration', '10+', 'Antique book restoration expert.', NULL,
  'Antique book restoration expert.', 12, 193, 97.00, '3 hours', TRUE),
 
 ('Grace Ng', 'grace@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456792', 'Johor',
- 'Grace Ng Toy & Doll Repair', '5-10', 'Plushie and doll restoration.', 'images/experts/grace.jpg',
+ 'Grace Ng Toy & Doll Repair', '5-10', 'Plushie and doll restoration.', NULL,
  'Plushie and doll restoration.', 6, 241, 96.80, '2 hours', TRUE),
 
 ('Nur Aisyah', 'aisyah@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456793', 'Johor',
- 'Aisyah Shoe Repair', '5-10', 'Luxury shoe repair specialist.', 'images/experts/aisyah.jpg',
+ 'Aisyah Shoe Repair', '5-10', 'Luxury shoe repair specialist.', NULL,
  'Luxury shoe repair specialist.', 7, 278, 98.00, '2 hours', TRUE),
 
 ('Daniel Wong', 'daniel@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456794', 'Kuala Lumpur',
- 'Daniel Wong Leather Craft', '5-10', 'Vintage leather craftsman.', 'images/experts/daniel.jpg',
+ 'Daniel Wong Leather Craft', '5-10', 'Vintage leather craftsman.', NULL,
  'Vintage leather craftsman.', 9, 354, 99.00, '1 hour', TRUE);
 
 INSERT INTO customers (full_name, email, password, phone, location) VALUES
@@ -47,38 +54,26 @@ INSERT INTO customers (full_name, email, password, phone, location) VALUES
 
 -- expert_id 1-6 map to Alex, Sarah, Jason, Grace, Aisyah, Daniel (insertion order above)
 INSERT INTO services (expert_id, category_id, title, description, starting_price, estimated_duration) VALUES
-(1, 1, 'Luxury Bag Repair',           'Professional restoration for premium leather bags.', 80,  '3-5 Days'),
-(2, 4, 'Wedding Dress Alteration',    'Custom fitting and alteration for wedding dresses.', 120, '5-7 Days'),
-(3, 2, 'Book Restoration',            'Repair damaged books and antique collections.',      40,  '2-4 Days'),
-(4, 5, 'Vintage Doll Repair',         'Restore damaged dolls and plushies.',                 55,  '3 Days'),
-(5, 3, 'Luxury Shoe Repair',          'Leather shoe cleaning and sole replacement.',         65,  '2-3 Days'),
-(6, 1, 'Leather Wallet Restoration',  'Restore old leather wallets.',                        35,  '2 Days');
+(1, 7, 'Luxury Bag Repair',                   'Professional restoration for premium leather bags.', 80,  '3-5 Days'),
+(2, 1, 'Wedding Dress Alteration',            'Custom fitting and alteration for wedding dresses.', 120, '5-7 Days'),
+(3, 5, 'Book Restoration',                    'Repair damaged books and antique collections.',      40,  '2-4 Days'),
+(4, 4, 'Vintage Doll Repair',                 'Restore damaged dolls and plushies.',                 55,  '3 Days'),
+(5, 8, 'Luxury Shoe Repair',                  'Leather shoe cleaning and sole replacement.',         65,  '2-3 Days'),
+(6, 7, 'Leather Wallet Restoration',          'Restore old leather wallets.',                        35,  '2 Days'),
+(2, 2, 'Cheongsam & Baju Kurung Restoration', 'Embroidery repair, re-fitting and lining replacement for heritage and festive wear.', 90, '5-7 Days'),
+(2, 3, 'Curtain & Cushion Repair',            'Re-hemming curtains, replacing cushion zips and patching sofa covers.',             50, '3-5 Days'),
+(3, 6, 'Old Photo & Certificate Restoration', 'Cleaning, flattening and archival mounting for old photos, certificates and calligraphy.', 70, '5-7 Days');
 
 INSERT INTO service_images (service_id, image_path, caption, display_order) VALUES
-(1, 'images/services/bag/bag1.jpg', 'Front View', 1),
-(1, 'images/services/bag/bag2.jpg', 'Before Repair', 2),
-(1, 'images/services/bag/bag3.jpg', 'After Repair', 3),
-(1, 'images/services/bag/bag4.jpg', 'Leather Detail', 4),
-
-(2, 'images/services/dress/dress1.jpg', 'Wedding Dress', 1),
-(2, 'images/services/dress/dress2.jpg', 'Sleeve Alteration', 2),
-(2, 'images/services/dress/dress3.jpg', 'Finished Result', 3),
-
-(3, 'images/services/book/book1.jpg', 'Old Book', 1),
-(3, 'images/services/book/book2.jpg', 'Page Repair', 2),
-(3, 'images/services/book/book3.jpg', 'Restored Book', 3),
-
-(4, 'images/services/doll/doll1.jpg', 'Vintage Doll', 1),
-(4, 'images/services/doll/doll2.jpg', 'Repair Process', 2),
-(4, 'images/services/doll/doll3.jpg', 'Completed', 3),
-
-(5, 'images/services/shoe/shoe1.jpg', 'Luxury Shoes', 1),
-(5, 'images/services/shoe/shoe2.jpg', 'Sole Replacement', 2),
-(5, 'images/services/shoe/shoe3.jpg', 'Finished', 3),
-
-(6, 'images/services/wallet/wallet1.jpg', 'Leather Wallet', 1),
-(6, 'images/services/wallet/wallet2.jpg', 'Cleaning', 2),
-(6, 'images/services/wallet/wallet3.jpg', 'Completed', 3);
+(1, 'assets/images/services/bag-refurbishment.jpg',   'Leather bag restoration', 1),
+(2, 'assets/images/services/clothing-alteration.jpg', 'Dress alteration',        1),
+(3, 'assets/images/services/book-restoration.jpg',    'Restored book',           1),
+(4, 'assets/images/services/plushie-doctor.jpg',      'Plushie repair',          1),
+(5, 'assets/images/services/footwear-repair.jpg',     'Shoe repair',             1),
+(6, 'assets/images/services/bag-refurbishment.jpg',   'Leather goods',           1),
+(7, 'assets/images/services/traditional-wear.jpg',    'Traditional wear',        1),
+(8, 'assets/images/services/home-textiles.jpg',       'Home textiles',           1),
+(9, 'assets/images/services/paper-memorabilia.jpg',   'Paper restoration',       1);
 
 -- customer_id 1-3 map to Emily, Michael, Siti (insertion order above)
 INSERT INTO repair_requests (customer_id, service_id, item_name, repair_description, reference_image, quoted_price, status) VALUES
@@ -98,15 +93,6 @@ INSERT INTO favorites (customer_id, service_id) VALUES
 (2, 2),
 (2, 5),
 (3, 4);
-
-INSERT INTO request_images (request_id, image_path, display_order) VALUES
-(1, 'uploads/request1_1.jpg', 1),
-(1, 'uploads/request1_2.jpg', 2),
-(2, 'uploads/request2_1.jpg', 1),
-(3, 'uploads/request3_1.jpg', 1),
-(3, 'uploads/request3_2.jpg', 2),
-(4, 'uploads/request4_1.jpg', 1),
-(5, 'uploads/request5_1.jpg', 1);
 
 -- ============================================================
 -- More test reviews for Emily Tan (customer_id 1)
@@ -167,7 +153,7 @@ INSERT INTO repair_requests (customer_id, service_id, item_name, repair_descript
 VALUES (1, 1, 'Canvas Tote Bag', 'Strap had torn away from the base seam and needed reinforcing.', 'uploads/request16.jpg', 65, 'Completed');
 
 INSERT INTO review_media (review_id, media_path, media_type, display_order) VALUES
-(@rev13, 'assets/uploads/reviews/sample_teddy_after.jpg', 'image', 1);
+(@rev13, 'assets/images/services/plushie-doctor.jpg', 'image', 1);
 
 -- Sample chat data for testing the chat widget.
 -- Run AFTER mendly-schema.sql and this file.
@@ -398,3 +384,16 @@ SET last_message_at = (
     SELECT MAX(sent_at) FROM messages m WHERE m.conversation_id = c.conversation_id
 )
 WHERE c.conversation_id IN (@convEmilyAlex, @convMichaelSarah, @convSitiAisyah, @convEmilyGrace, @convMichaelJason, @convSitiDaniel);
+
+-- ============================================================
+-- Admin account for admin/inquiries.php
+-- ============================================================
+-- Username: admin   Password: ChangeMe!2026 (change before deploying)
+INSERT INTO admins (username, password) VALUES
+('admin', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma');
+
+-- A few sample inquiries so the admin page isn't empty on first run.
+INSERT INTO inquiries (full_name, email, user_type, subject_type, message, status) VALUES
+('Emily Tan', 'emily@gmail.com', 'Customer', 'Question',   'Do experts offer pickup for bulky items like curtains?', 'Pending'),
+('Alex Tan',  'alex@mendly.com', 'Expert',   'Suggestion', 'It would help to upload more than one photo per service listing.', 'In Progress'),
+('Jamie Ooi', 'jamie@example.com', 'Guest',  'Complaint',  'The reset link expired before I could use it.', 'Resolved');

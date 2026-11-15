@@ -55,7 +55,7 @@ if ($account) {
     // shown directly on the next page instead of being emailed.
     $_SESSION['reset_link_preview'] =
         (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] .
-        dirname($_SERVER['PHP_SELF']) . '/reset-password.php?token=' . $token;
+        rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/reset-password.php?token=' . $token;
 }
 
 mysqli_close($conn);

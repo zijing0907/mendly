@@ -1,0 +1,7 @@
+# Uploaded files are data, never code. Upload handlers already save files
+# with an extension chosen from the detected image type, and this is a
+# second line of defence: Apache refuses to serve anything script-like here.
+<FilesMatch "\.(php\d?|phtml|phar|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes

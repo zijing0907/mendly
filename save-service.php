@@ -1,32 +1,38 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-if (($_SESSION['role'] ?? '') !== 'expert') {
-    header('Location: index.php');
-    exit;
-}
-
 include("includes/db.php");
+
+$expertId = requireRole('expert');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: add-service.php');
     exit;
 }
 
-$expertId          = (int) $_SESSION['user_id'];
+$serviceId          = (int) ($_POST['serviceId'] ?? 0);   // 0 = new service
 $categoryId         = trim($_POST['categoryId'] ?? '');
+
+// Editing: the service must belong to this expert
+if ($serviceId > 0) {
+    $ownerStmt = mysqli_prepare($conn, "SELECT service_id FROM services WHERE service_id = ? AND expert_id = ?");
+    mysqli_stmt_bind_param($ownerStmt, 'ii', $serviceId, $expertId);
+    mysqli_stmt_execute($ownerStmt);
+    $isOwner = mysqli_fetch_assoc(mysqli_stmt_get_result($ownerStmt)) !== null;
+    mysqli_stmt_close($ownerStmt);
+
+    if (!$isOwner) {
+        header('Location: my-services.php?msg=not_found');
+        exit;
+    }
+}
 $title              = trim($_POST['title'] ?? '');
 $description        = trim($_POST['description'] ?? '');
 $startingPrice      = trim($_POST['startingPrice'] ?? '');
 $estimatedDuration  = trim($_POST['estimatedDuration'] ?? '');
 
 if ($categoryId === '' || $title === '' || $startingPrice === '' || $estimatedDuration === '') {
-    header('Location: add-service.php?error=missing_fields');
+    header('Location: add-service.php?' . ($serviceId ? 'id=' . $serviceId . '&' : '') . 'error=missing_fields');
     exit;
 }
 
@@ -43,7 +49,7 @@ if (mysqli_stmt_num_rows($checkCategoryStmt) === 0) {
     mysqli_stmt_close($checkCategoryStmt);
     mysqli_close($conn);
 
-    header('Location: add-service.php?error=invalid_category');
+    header('Location: add-service.php?' . ($serviceId ? 'id=' . $serviceId . '&' : '') . 'error=invalid_category');
     exit;
 }
 
@@ -53,40 +59,36 @@ mysqli_stmt_close($checkCategoryStmt);
 if (!is_numeric($startingPrice) || (float) $startingPrice <= 0) {
     mysqli_close($conn);
 
-    header('Location: add-service.php?error=invalid_price');
+    header('Location: add-service.php?' . ($serviceId ? 'id=' . $serviceId . '&' : '') . 'error=invalid_price');
     exit;
 }
 
 $startingPrice = (float) $startingPrice;
 
-$insertServiceStmt = mysqli_prepare(
-    $conn,
-    "INSERT INTO services (expert_id, category_id, title, description, starting_price, estimated_duration)
-     VALUES (?, ?, ?, ?, ?, ?)"
-);
-
-mysqli_stmt_bind_param(
-    $insertServiceStmt,
-    'iissds',
-    $expertId,
-    $categoryId,
-    $title,
-    $description,
-    $startingPrice,
-    $estimatedDuration
-);
-
-if (mysqli_stmt_execute($insertServiceStmt)) {
-    mysqli_stmt_close($insertServiceStmt);
-    mysqli_close($conn);
-
-    header('Location: add-service.php?added=1');
-    exit;
+if ($serviceId > 0) {
+    // Edit: the expert_id condition means an expert can only ever update
+    // their own listing, whatever service ID is posted.
+    $stmt = mysqli_prepare(
+        $conn,
+        "UPDATE services
+         SET category_id = ?, title = ?, description = ?, starting_price = ?, estimated_duration = ?
+         WHERE service_id = ? AND expert_id = ?"
+    );
+    mysqli_stmt_bind_param($stmt, 'issdsii', $categoryId, $title, $description, $startingPrice, $estimatedDuration, $serviceId, $expertId);
+    $successUrl = 'my-services.php?msg=updated';
 } else {
-    mysqli_stmt_close($insertServiceStmt);
-    mysqli_close($conn);
-
-    header('Location: add-service.php?error=server_error');
-    exit;
+    $stmt = mysqli_prepare(
+        $conn,
+        "INSERT INTO services (expert_id, category_id, title, description, starting_price, estimated_duration)
+         VALUES (?, ?, ?, ?, ?, ?)"
+    );
+    mysqli_stmt_bind_param($stmt, 'iissds', $expertId, $categoryId, $title, $description, $startingPrice, $estimatedDuration);
+    $successUrl = 'add-service.php?added=1';
 }
-?>
+
+$ok = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+
+header('Location: ' . ($ok ? $successUrl : 'add-service.php?' . ($serviceId ? 'id=' . $serviceId . '&' : '') . 'error=server_error'));
+exit;

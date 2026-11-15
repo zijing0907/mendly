@@ -46,6 +46,7 @@
 SELECT s.*,
     u.full_name,
     u.avatar,
+    u.avatar_mime,
     u.location,
     u.bio,
     u.years_experience,
@@ -54,6 +55,7 @@ SELECT s.*,
     u.average_response_time,
     u.verified,
     c.category_name,
+    c.image_path AS category_image,
     review_summary.average_rating,
     COALESCE(review_summary.total_reviews, 0) AS total_reviews
 FROM services s
@@ -75,7 +77,7 @@ LEFT JOIN (
 ) review_summary
 ON review_summary.service_id = s.service_id
 
-WHERE s.service_id = ?
+WHERE s.service_id = ? AND s.status = 'active'
 ";
 
     $stmt = mysqli_prepare($conn, $sql);
@@ -119,6 +121,15 @@ ORDER BY r.review_date DESC
     $reviews = mysqli_stmt_get_result($stmtReview);
 
     $imageList     = mysqli_fetch_all($images, MYSQLI_ASSOC);
+
+    // New listings have no photos yet — show the category's cover photo
+    if (empty($imageList) && ! empty($service['category_image'])) {
+    $imageList[] = ['image_path' => $service['category_image'], 'caption' => $service['category_name']];
+    }
+
+    // Expert avatars are stored as image bytes in the database
+    $expertAvatar = imageDataUri($service['avatar'], $service['avatar_mime'], 'assets/images/default-expert.jpg');
+    $viewerRole   = currentRole();
     $averageRating = (float) ($service['average_rating'] ?? 0);
     $filledStars   = max(0, min(5, (int) round($averageRating)));
     $emptyStars    = 5 - $filledStars;
@@ -185,7 +196,7 @@ ORDER BY r.review_date DESC
                     <div class="rating">
                         ⭐
                         <?php echo number_format($service['average_rating'] ?? 0, 1); ?>
-                        (<?php echo $service['total_reviews']; ?>Reviews)
+                        (<?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'Review' : 'Reviews'; ?>)
                     </div>
                     <p><?php echo nl2br(htmlspecialchars($service['description'])); ?></p>
 
@@ -209,9 +220,12 @@ ORDER BY r.review_date DESC
 
                     <div class="price-rating">
                         <strong><?php echo number_format($averageRating, 1); ?> / 5</strong>
-                        <span>Customer rating from <?php echo $service['total_reviews']; ?> reviews</span>
+                        <span>Customer rating from <?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'review' : 'reviews'; ?></span>
                     </div>
 
+                    <?php if ($viewerRole === 'expert'): ?>
+                        <p class="expert-note">You're signed in as an expert. Log in with a customer account to request this repair.</p>
+                    <?php else: ?>
                     <a href="submit-request.php?service=<?php echo $serviceID; ?>" class="request-btn">Submit Repair Request</a>
                     <button
                         class="favorite-btn <?php echo $isFavorite ? 'active' : ''; ?>"
@@ -222,6 +236,7 @@ ORDER BY r.review_date DESC
                     >
                         <?php echo $isFavorite ? '&#9829; Saved to Favorites' : '&#9825; Save to Favorites'; ?>
                     </button>
+                    <?php endif; ?>
 
                     <div class="expert-summary">
 
@@ -256,13 +271,13 @@ ORDER BY r.review_date DESC
 
             <div class="expert-card">
                 <div class="expert-avatar">
-                    <img src="<?php echo htmlspecialchars($service['avatar']); ?>" alt="<?php echo htmlspecialchars($service['full_name']); ?>">
+                    <img src="<?php echo e($expertAvatar); ?>" alt="<?php echo e($service['full_name']); ?>">
                 </div>
 
                 <div class="expert-details">
                     <h3><?php echo htmlspecialchars($service['full_name']); ?></h3>
 
-                    <p><?php echo nl2br(htmlspecialchars($service['bio'])); ?></p>
+                    <p><?php echo nl2br(e($service['bio'])); ?></p>
 
                     <div class="expert-stats">
 
@@ -284,7 +299,7 @@ ORDER BY r.review_date DESC
                     </div>
                 </div>
 
-                <button class="profile-btn" type="button">View Full Profile</button>
+                <a class="profile-btn" href="browse-services.php?expert=<?php echo (int) $service['expert_id']; ?>">All Services by <?php echo e(strtok($service['full_name'], ' ')); ?></a>
 
             </div>
         </div>
@@ -329,6 +344,9 @@ ORDER BY r.review_date DESC
     <section class="review-section">
         <div class="container">
             <h2>Customer Reviews</h2>
+            <p class="all-reviews-link">
+                <a href="expert-review.php?expert_id=<?php echo (int) $service['expert_id']; ?>">See all reviews for <?php echo e($service['full_name']); ?> &rarr;</a>
+            </p>
 
             <?php
                 if (mysqli_num_rows($reviews) == 0) {

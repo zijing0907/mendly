@@ -16,15 +16,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Reviews are left by customers about the experts who did the work.
-$sessionRole = $_SESSION['role']
-  ?? $_SESSION['user_role']
-  ?? $_SESSION['user_type']
-  ?? $_SESSION['account_type']
-  ?? '';
-
-$sessionRole = strtolower(trim((string) $sessionRole));
-
-if ($sessionRole !== 'customer') {
+if (($_SESSION['role'] ?? '') !== 'customer') {
   header('Location: profile.php');
   exit;
 }

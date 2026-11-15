@@ -13,7 +13,7 @@
   margin: 0 auto;
 }
 
-/* 居中标题 */
+/* Centred page title */
 .page-header {
   text-align: center;
   margin-bottom: 40px;
@@ -25,7 +25,7 @@
   margin-bottom: 10px;
 }
 
-/* 主 Container：左右结构 */
+/* Two-column layout */
 .contact-info-container {
   display: flex;
   background-color: #ffffff;
@@ -34,7 +34,7 @@
   overflow: hidden;
 }
 
-/* 左侧：地址与社交媒体 */
+/* Left: address and social media */
 .contact-details {
   flex: 1;
   padding: 40px;
@@ -77,7 +77,7 @@
   margin: 30px 0;
 }
 
-/* 社交媒体区域 */
+/* Social media */
 .social-media-group h3 {
   font-size: 1.2rem;
   color: var(--color-dark, #2c3e50);
@@ -122,7 +122,7 @@
   font-size: 0.9rem;
 }
 
-/* 右侧：Google Map */
+/* Right: Google Map */
 .contact-map {
   flex: 1;
   min-height: 450px;
@@ -153,7 +153,7 @@
   color: var(--color-medium, #666);
   margin-bottom: 30px;
 }
-/* 提交反馈提示框 */
+/* Submit feedback message */
 .form-alert {
   padding: 14px 20px;
   border-radius: 8px;
@@ -180,7 +180,7 @@
   gap: 20px;
 }
 
-/* 并排布局 */
+/* Side-by-side fields */
 .form-row {
   display: flex;
   gap: 20px;
@@ -209,7 +209,7 @@
   margin-left: 2px;
 }
 
-/* 表单输入控件基础样式 */
+/* Form inputs */
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -240,7 +240,7 @@
   font-family: inherit;
 }
 
-/* 提交按钮 */
+/* Submit button */
 .form-submit-wrapper {
   text-align: center;
   margin-top: 10px;

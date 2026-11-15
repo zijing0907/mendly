@@ -1,48 +1,60 @@
 <?php
 session_start();
-$pageTitle = "Meet Our Experts";
+$pageTitle   = "Meet Our Experts";
+$currentPage = 'experts';
 
 include 'includes/db.php';
 
-// 获取当前选中的分类 (从 URL 参数获取，默认为 'all')
+// Category tab currently selected (?category=...), defaulting to 'all'
 $selectedCategory = $_GET['category'] ?? 'all';
 
-// 定义三大固定分类，便于导航渲染
+// The three groups shown on the home page; categories.category_group
+// stores which group each repair category belongs to.
 $categories = [
-    'all' => 'ALL',
+    'all'      => 'ALL',
     'textiles' => 'TEXTILES & APPAREL',
-    'toys' => 'TOYS & MEMORABILIA',
-    'leather' => 'LEATHER & ACCESSORIES'
+    'toys'     => 'TOYS & MEMORABILIA',
+    'leather'  => 'LEATHER & ACCESSORIES'
 ];
 
-// 定义大分类与数据库中散乱 specialisation 关键词的映射关系
-$categoryMap = [
-    'textiles' => ['clothing', 'textile', 'apparel', 'fabric', 'dress', 'garment', 'tailor', 'sewing'],
-    'toys'     => ['doll', 'toy', 'book', 'figurine', 'memorabilia', 'collectible', 'plush', 'game'],
-    'leather'  => ['leather', 'shoe', 'bag', 'belt', 'accessory', 'accessories', 'wallet', 'footwear']
-];
+if (!isset($categories[$selectedCategory])) {
+    $selectedCategory = 'all';
+}
 
-// 构建 SQL 查询：提取所有专家信息
-$sql = "SELECT 
-            expert_id, 
-            full_name, 
-            business_name, 
-            specialisation, 
-            years_experience, 
-            completed_repairs, 
-            bio, 
-            photo_path, 
-            avatar, 
-            verified 
-        FROM experts 
-        ORDER BY expert_id DESC";
+// An expert's specialisation is whatever categories their active services
+// are listed under, so it can never drift out of sync with what they offer.
+$sql = "SELECT
+            e.expert_id,
+            e.full_name,
+            e.business_name,
+            e.experience,
+            e.years_experience,
+            e.completed_repairs,
+            e.bio,
+            e.description,
+            e.photo_path,
+            e.photo_path_mime,
+            e.avatar,
+            e.avatar_mime,
+            e.verified,
+            GROUP_CONCAT(DISTINCT c.category_name ORDER BY c.category_name SEPARATOR ', ') AS specialisation,
+            GROUP_CONCAT(DISTINCT c.category_group) AS category_groups
+        FROM experts e
+        LEFT JOIN services s   ON s.expert_id = e.expert_id AND s.status = 'active'
+        LEFT JOIN categories c ON c.category_id = s.category_id
+        GROUP BY e.expert_id
+        ORDER BY e.expert_id DESC";
 
-$result = mysqli_query($conn, $sql);
+$result  = mysqli_query($conn, $sql);
 $experts = [];
 
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
-        $experts[] = $row;
+        $groups = $row['category_groups'] ? explode(',', $row['category_groups']) : [];
+
+        if ($selectedCategory === 'all' || in_array($selectedCategory, $groups, true)) {
+            $experts[] = $row;
+        }
     }
 }
 ?>
@@ -53,28 +65,24 @@ if ($result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle; ?></title>
+    <title><?php echo $pageTitle; ?> | Mendly</title>
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/experts.css">
 </head>
 
 <body>
 
-    <?php
-    if (file_exists("includes/header.php")) {
-        include "includes/header.php";
-    }
-    ?>
+    <?php include "includes/header.php"; ?>
 
     <main class="experts-page-container">
 
-        <!-- 顶部标题区域 -->
+        <!-- Page title -->
         <div class="page-header">
             <h1>Meet Our Experts</h1>
             <p>Connect with master craftspeople dedicated to restoring your cherished possessions.</p>
         </div>
 
-        <!-- 专属 Category Nav (Horizontal) -->
+        <!-- Category tabs -->
         <div class="expert-category-nav">
             <?php foreach ($categories as $key => $label): ?>
                 <a
@@ -85,32 +93,13 @@ if ($result) {
             <?php endforeach; ?>
         </div>
 
-        <!-- 专家卡片列表 -->
+        <!-- Expert cards -->
         <div class="experts-list">
-            <?php
-            $hasVisibleExperts = false;
-
-            foreach ($experts as $expert):
-                $specLower = strtolower(trim($expert['specialisation'] ?? ''));
-
-                $isMatch = false;
-
-                if ($selectedCategory === 'all') {
-                    $isMatch = true;
-                } elseif (isset($categoryMap[$selectedCategory])) {
-                    // 检查专家的 specialisation 是否包含该大类下的任意一个子关键词
-                    foreach ($categoryMap[$selectedCategory] as $keyword) {
-                        if (strpos($specLower, $keyword) !== false) {
-                            $isMatch = true;
-                            break; // 匹配到一个立刻通过
-                        }
-                    }
-                }
-
-                if (!$isMatch) continue;
-
-                $hasVisibleExperts = true;
-                $photo = !empty($expert['photo_path']) ? $expert['photo_path'] : (!empty($expert['avatar']) ? $expert['avatar'] : 'assets/images/default-expert.jpg');
+            <?php foreach ($experts as $expert):
+                // Business photo first, then personal avatar, then the stock image
+                $photo = imageDataUri($expert['photo_path'], $expert['photo_path_mime'])
+                    ?? imageDataUri($expert['avatar'], $expert['avatar_mime'], 'assets/images/default-expert.jpg');
+                $years = (int) ($expert['years_experience'] ?? 0);
             ?>
                 <div class="expert-card">
                     <div class="expert-img-wrapper">
@@ -131,14 +120,14 @@ if ($result) {
                                     <h2><?php echo htmlspecialchars($expert['business_name'] ?: $expert['full_name']); ?></h2>
                                     <p class="expert-name">By <?php echo htmlspecialchars($expert['full_name']); ?></p>
                                 </div>
-                                <span class="specialisation-tag">
-                                    <?php echo htmlspecialchars($expert['specialisation']); ?>
-                                </span>
+                                <?php if (!empty($expert['specialisation'])): ?>
+                                    <span class="specialisation-tag"><?php echo e($expert['specialisation']); ?></span>
+                                <?php endif; ?>
                             </div>
 
                             <div class="expert-stats">
                                 <span class="stat-item">
-                                    🏋️‍♂️ <strong><?php echo (int)($expert['years_experience'] ?? 0); ?></strong> Years Experience
+                                    🏅 <strong><?php echo $years > 0 ? $years : e($expert['experience']); ?></strong> Years Experience
                                 </span>
                                 <span class="stat-item">
                                     🛠️ <strong><?php echo (int)($expert['completed_repairs'] ?? 0); ?></strong> Repairs Completed
@@ -147,16 +136,18 @@ if ($result) {
 
                             <p class="expert-bio">
                                 <?php
-                                $bioText = $expert['bio'] ?? $expert['description'] ?? 'No bio provided yet.';
-                                // 超过 120 个字符就自动截断并补上 ...
+                                $bioText = $expert['bio'] ?: ($expert['description'] ?: 'No bio provided yet.');
+                                // Trim long bios to 120 characters
                                 echo htmlspecialchars(mb_strimwidth($bioText, 0, 120, '...'));
                                 ?>
                             </p>
                         </div>
 
                         <div class="card-footer">
-                            <!-- 点击跳转至该专家的专属服务列表 -->
-                            <a href="expert-services.php?expert_id=<?php echo $expert['expert_id']; ?>" class="btn-view-services">
+                            <a href="expert-review.php?expert_id=<?php echo $expert['expert_id']; ?>" class="btn-view-reviews">
+                                Read reviews
+                            </a>
+                            <a href="browse-services.php?expert=<?php echo $expert['expert_id']; ?>" class="btn-view-services">
                                 View Expert's Services &rarr;
                             </a>
                         </div>
@@ -164,7 +155,7 @@ if ($result) {
                 </div>
             <?php endforeach; ?>
 
-            <?php if (!$hasVisibleExperts): ?>
+            <?php if (!$experts): ?>
                 <div class="empty-experts">
                     <h3>No experts found in this category.</h3>
                     <p>Try switching to another category to view our artisans.</p>
@@ -173,6 +164,8 @@ if ($result) {
         </div>
 
     </main>
+
+    <?php include "includes/footer.php"; ?>
 
 </body>
 

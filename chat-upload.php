@@ -7,14 +7,14 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'], $_SESSION['user_role'])) {
+if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
   http_response_code(401);
   echo json_encode(['error' => 'Not logged in']);
   exit;
 }
 
 $userId = (int) $_SESSION['user_id'];
-$role   = $_SESSION['user_role'];
+$role   = $_SESSION['role'] === 'expert' ? 'expert' : 'customer';
 
 $conversationId = (int) ($_POST['conversation_id'] ?? 0);
 if (!$conversationId) {

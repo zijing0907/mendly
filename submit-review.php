@@ -8,19 +8,7 @@ session_start();
 require_once 'includes/db.php';
 header('Content-Type: application/json');
 
-// Same fallback chain review.php uses, since different parts of the app
-// (nav.php's test-login switch vs process-login.php) set the role under
-// different session keys — checking only $_SESSION['role'] here caused
-// logged-in customers to get rejected even though review.php let them
-// see the page fine.
-$sessionRole = $_SESSION['role']
-  ?? $_SESSION['user_role']
-  ?? $_SESSION['user_type']
-  ?? $_SESSION['account_type']
-  ?? '';
-$sessionRole = strtolower(trim((string) $sessionRole));
-
-if (!isset($_SESSION['user_id']) || $sessionRole !== 'customer') {
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'customer') {
   http_response_code(401);
   echo json_encode(['error' => 'Please log in as a customer to leave a review.']);
   exit;

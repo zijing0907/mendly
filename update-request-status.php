@@ -42,9 +42,19 @@ if (!$row) {
   exit;
 }
 
-if ($row['status'] === 'Completed' || $row['status'] === 'Cancelled') {
+// Same transitions my-requests-expert.php offers in its dropdown. Checking
+// them here too stops a hand-crafted POST from skipping steps (e.g. jumping
+// straight from Pending to Completed).
+$nextSteps = [
+  'Pending'              => ['Accepted', 'Cancelled'],
+  'Accepted'             => ['In Progress', 'Cancelled'],
+  'In Progress'          => ['Ready for Collection', 'Cancelled'],
+  'Ready for Collection' => ['Completed'],
+];
+
+if (!in_array($newStatus, $nextSteps[$row['status']] ?? [], true)) {
   http_response_code(409);
-  echo json_encode(['error' => 'This request is already closed and can\'t be updated further.']);
+  echo json_encode(['error' => "A request that is {$row['status']} can't be moved to {$newStatus}."]);
   exit;
 }
 

@@ -49,6 +49,10 @@ if (!$account) {
 
 // password_verify() checks the submitted password against the stored hash
 if ($account && password_verify($password, $account['password'])) {
+    // Issue a new session ID now that the user is authenticated, so an
+    // attacker who planted a session ID beforehand can't reuse it.
+    session_regenerate_id(true);
+
     $_SESSION['user_id']   = $account['id'];
     $_SESSION['role']      = $role;
     $_SESSION['full_name'] = $account['full_name'];

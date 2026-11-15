@@ -1,4 +1,6 @@
 <?php
+require_once 'includes/helpers.php';
+
 $errorMessages = [
     'missing_fields'      => 'Please enter both your email and password.',
     'invalid_credentials' => 'That email or password doesn\'t match our records.',
