@@ -1,0 +1,931 @@
+/* =========================================================
+   Mendly - Service Details
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(180deg, #fdfbf8, #f9f6f0);
+  color: var(--color-dark);
+  line-height: 1.7;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container {
+  width: min(1200px, 92%);
+  margin: auto;
+}
+
+/* =========================================================
+   Breadcrumb
+========================================================= */
+
+.breadcrumb {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(169, 136, 133, 0.25);
+  padding: 18px 0;
+}
+
+.breadcrumb .container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-subtle-dark);
+  font-size: 15px;
+}
+
+.breadcrumb a {
+  color: var(--color-medium);
+  transition: 0.3s;
+}
+
+.breadcrumb a:hover {
+  color: var(--color-dark);
+}
+
+/* =========================================================
+   Overview
+========================================================= */
+
+.service-overview {
+  padding: 50px 0 70px;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 340px;
+  gap: 35px;
+  align-items: start;
+}
+
+/* =========================================================
+   Gallery
+========================================================= */
+
+.gallery {
+  background: var(--color-light);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+}
+
+.main-image {
+  height: 460px;
+  object-fit: cover;
+  border-radius: 18px;
+  transition: 0.4s;
+}
+
+.main-image:hover {
+  transform: scale(1.02);
+}
+
+.thumbnail-list {
+  display: flex;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.thumbnail {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.thumbnail:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-medium);
+}
+
+.thumbnail.active {
+  border-color: var(--color-medium);
+  box-shadow: 0 0 0 3px rgba(169, 136, 133, 0.15);
+}
+
+.gallery-stage {
+  position: relative;
+}
+
+.gallery-control {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 50%;
+  color: var(--color-dark);
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 28px;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.gallery-control:hover {
+  color: #fff;
+  background: var(--color-medium);
+}
+
+.gallery-control.previous {
+  left: 14px;
+}
+
+.gallery-control.next {
+  right: 14px;
+}
+
+/* =========================================================
+   Service Info
+========================================================= */
+
+.service-info {
+  background: var(--color-light);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+}
+
+.category {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  background: rgba(169, 136, 133, 0.15);
+  color: var(--color-medium);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.service-info h1 {
+  font-size: 36px;
+  line-height: 1.3;
+  margin-bottom: 18px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #c9a227;
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+
+.rating span {
+  color: var(--color-subtle-dark);
+  font-weight: 500;
+}
+
+.service-info p {
+  color: var(--color-subtle-dark);
+}
+
+.service-tagline {
+  margin: -8px 0 18px;
+  color: var(--color-medium) !important;
+  font-weight: 600;
+}
+
+.info-list {
+  margin-top: 32px;
+  border-top: 1px solid rgba(169, 136, 133, 0.25);
+  padding-top: 24px;
+}
+
+.info-list p {
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-list strong {
+  color: var(--color-dark);
+}
+
+/* =========================================================
+   Price Card
+========================================================= */
+
+.price-card {
+  position: sticky;
+  top: 30px;
+  background: var(--color-light);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+  transition: 0.3s;
+}
+
+.price-card:hover {
+  box-shadow: 0 16px 32px rgba(74, 55, 53, 0.12);
+}
+
+.price-card h2 {
+  font-size: 20px;
+  color: var(--color-dark);
+  margin-bottom: 20px;
+}
+
+.price {
+  margin-bottom: 28px;
+}
+
+.price small {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-subtle-dark);
+  font-size: 14px;
+}
+
+.price strong {
+  display: block;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--color-dark);
+  line-height: 1.1;
+}
+
+.price span {
+  display: block;
+  margin-top: 6px;
+  color: var(--color-subtle-dark);
+  font-size: 14px;
+}
+
+.price-rating {
+  display: grid;
+  gap: 2px;
+  margin: -10px 0 24px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(169, 136, 133, 0.25);
+  border-bottom: 1px solid rgba(169, 136, 133, 0.25);
+}
+
+.price-rating strong {
+  color: var(--color-dark);
+}
+
+.price-rating span {
+  color: var(--color-subtle-dark);
+  font-size: 14px;
+}
+
+/* =========================================================
+   Request Button
+========================================================= */
+
+.request-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 28px;
+  background: var(--color-medium);
+  color: #fff;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s;
+  box-shadow: 0 8px 20px rgba(169, 136, 133, 0.25);
+}
+
+.request-btn:hover {
+  background: #8e6e6b;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(142, 110, 107, 0.35);
+}
+
+.request-btn:active {
+  transform: scale(0.98);
+}
+
+.favorite-btn,
+.profile-btn {
+  border: 1px solid var(--color-medium);
+  border-radius: 12px;
+  color: var(--color-medium);
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.favorite-btn {
+  width: 100%;
+  padding: 13px;
+  margin-bottom: 24px;
+}
+
+.favorite-btn:hover,
+.profile-btn:hover {
+  color: #fff;
+  background: var(--color-medium);
+}
+
+/* =========================================================
+   Expert Summary
+========================================================= */
+
+.expert-summary {
+  border-top: 1px solid rgba(169, 136, 133, 0.25);
+  padding-top: 24px;
+}
+
+.expert-summary h3 {
+  font-size: 18px;
+  margin-bottom: 18px;
+  color: var(--color-dark);
+}
+
+.expert-summary p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  color: var(--color-subtle-dark);
+  font-size: 15px;
+}
+
+.expert-summary strong {
+  color: var(--color-dark);
+  font-weight: 600;
+}
+
+/* =========================================================
+   Trust Box
+========================================================= */
+
+.trust-box {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(169, 136, 133, 0.25);
+}
+
+.trust-box p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: var(--color-subtle-dark);
+  font-size: 14px;
+}
+
+/* =========================================================
+   Expert Section
+========================================================= */
+
+.expert-section {
+  margin-top: 60px;
+}
+
+.expert-card {
+  display: flex;
+  gap: 30px;
+  padding: 32px;
+  background: var(--color-light);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 18px;
+  box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+  transition: 0.3s;
+}
+
+.expert-card:hover {
+  box-shadow: 0 16px 32px rgba(74, 55, 53, 0.12);
+}
+
+.profile-btn {
+  align-self: flex-start;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+.expert-avatar {
+  flex-shrink: 0;
+}
+
+.expert-avatar img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid rgba(169, 136, 133, 0.15);
+}
+
+.expert-details {
+  flex: 1;
+}
+
+.expert-details h3 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: var(--color-dark);
+}
+
+.expert-details p {
+  color: var(--color-subtle-dark);
+  margin-bottom: 16px;
+}
+
+.expert-stats {
+  display: flex;
+  gap: 50px;
+  margin-top: 28px;
+}
+
+.expert-stats div {
+  text-align: center;
+}
+
+.expert-stats strong {
+  display: block;
+  font-size: 30px;
+  color: var(--color-medium);
+  margin-bottom: 4px;
+}
+
+.expert-stats span {
+  color: var(--color-subtle-dark);
+  font-size: 14px;
+}
+
+/* =========================================================
+   Reviews
+========================================================= */
+
+.review-section {
+  margin: 70px 0;
+}
+
+.review-section h2 {
+  margin-bottom: 24px;
+  font-size: 30px;
+  color: var(--color-dark);
+}
+
+.review-card {
+  margin-bottom: 22px;
+  padding: 28px;
+  background: var(--color-light);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-left: 5px solid var(--color-medium);
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(74, 55, 53, 0.05);
+  transition: 0.3s;
+}
+
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+}
+
+.review-card h4 {
+  margin-bottom: 10px;
+  color: var(--color-dark);
+}
+
+.review-card .rating {
+  margin-bottom: 14px;
+}
+
+.review-card p {
+  color: var(--color-subtle-dark);
+  line-height: 1.8;
+}
+
+.review-card small {
+  display: block;
+  margin-top: 18px;
+  color: var(--color-subtle-dark);
+}
+
+/* =========================================================
+   About service
+========================================================= */
+
+.about-section {
+  margin: 70px 0;
+}
+
+.about-section h2 {
+  margin-bottom: 24px;
+  font-size: 30px;
+}
+
+.about-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  overflow: hidden;
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 18px;
+  background: var(--color-light);
+  box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+}
+
+.about-copy,
+.service-note {
+  padding: 30px;
+}
+
+.about-copy h3,
+.service-note h3 {
+  margin-bottom: 14px;
+}
+
+.about-copy p,
+.about-copy li,
+.service-note li {
+  color: var(--color-subtle-dark);
+}
+
+.about-copy ul,
+.service-note ul {
+  margin: 18px 0 0 20px;
+}
+
+.about-copy li,
+.service-note li {
+  margin-bottom: 8px;
+}
+
+.service-note {
+  border-left: 1px solid rgba(169, 136, 133, 0.25);
+  background: rgba(169, 136, 133, 0.08);
+}
+
+/* =========================================================
+   Responsive
+========================================================= */
+
+@media (max-width: 1100px) {
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-overview {
+    padding: 40px 0 60px;
+  }
+
+  .gallery,
+  .service-info,
+  .price-card,
+  .expert-card {
+    padding: 24px;
+  }
+
+  .main-image {
+    height: 320px;
+  }
+
+  .thumbnail {
+    width: 70px;
+    height: 70px;
+  }
+
+  .service-info h1 {
+    font-size: 30px;
+  }
+
+  .price strong {
+    font-size: 36px;
+  }
+
+  .expert-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-btn {
+    align-self: center;
+  }
+
+  .about-card {
+    grid-template-columns: 1fr;
+  }
+
+  .service-note {
+    border-top: 1px solid rgba(169, 136, 133, 0.25);
+    border-left: 0;
+  }
+
+  .expert-avatar {
+    margin-bottom: 10px;
+  }
+
+  .expert-stats {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 94%;
+  }
+
+  .breadcrumb {
+    font-size: 14px;
+  }
+
+  .main-image {
+    height: 250px;
+  }
+
+  .service-info h1 {
+    font-size: 26px;
+  }
+
+  .expert-avatar img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .expert-stats {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .review-card {
+    padding: 22px;
+  }
+}
+
+/* Compact detail layout: keep core service information visible without a long first scroll. */
+body {
+  line-height: 1.45;
+}
+.breadcrumb {
+  padding: 10px 0;
+}
+.service-overview {
+  padding: 24px 0 32px;
+}
+.overview-grid {
+  grid-template-columns: minmax(300px, 1.1fr) minmax(270px, 1fr) 280px;
+  gap: 18px;
+}
+.gallery {
+  padding: 12px;
+  border-radius: 10px;
+}
+.main-image {
+  height: 300px;
+  border-radius: 9px;
+}
+.thumbnail-list {
+  gap: 8px;
+  margin-top: 10px;
+}
+.thumbnail {
+  width: 58px;
+  height: 58px;
+  border-radius: 7px;
+}
+.gallery-control {
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+}
+.gallery-control.previous {
+  left: 8px;
+}
+.gallery-control.next {
+  right: 8px;
+}
+.service-info,
+.price-card {
+  padding: 18px;
+  border-radius: 10px;
+}
+.category {
+  padding: 4px 10px;
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+.service-info h1 {
+  font-size: 26px;
+  line-height: 1.2;
+  margin-bottom: 9px;
+}
+.service-info p {
+  font-size: 14px;
+}
+.service-tagline {
+  margin: 0 0 10px;
+}
+.rating {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.info-list {
+  margin-top: 14px;
+  padding-top: 10px;
+}
+.info-list p {
+  margin-bottom: 7px;
+}
+.price-card {
+  top: 16px;
+}
+.price-card h2 {
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+.price {
+  margin-bottom: 14px;
+}
+.price small {
+  margin-bottom: 2px;
+}
+.price strong {
+  font-size: 28px;
+}
+.price span {
+  margin-top: 3px;
+  font-size: 12px;
+}
+.price-rating {
+  margin: 0 0 14px;
+  padding: 9px 0;
+}
+.request-btn {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.favorite-btn {
+  padding: 8px;
+  margin-bottom: 12px;
+}
+.expert-summary {
+  padding-top: 10px;
+}
+.expert-summary p {
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.trust-box {
+  margin-top: 10px;
+  padding-top: 9px;
+}
+.trust-box p {
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+.expert-section,
+.about-section,
+.review-section {
+  margin: 30px 0;
+}
+.expert-section {
+  margin-top: 24px;
+}
+.expert-card {
+  gap: 16px;
+  padding: 18px;
+  border-radius: 10px;
+}
+.expert-avatar img {
+  width: 76px;
+  height: 76px;
+  border-width: 3px;
+}
+.expert-details h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+.expert-details p {
+  margin-bottom: 7px;
+  font-size: 14px;
+}
+.expert-stats {
+  gap: 28px;
+  margin-top: 10px;
+}
+.expert-stats strong {
+  font-size: 20px;
+}
+.expert-stats span {
+  font-size: 12px;
+}
+.profile-btn {
+  padding: 7px 11px;
+}
+.about-section h2,
+.review-section h2 {
+  margin-bottom: 12px;
+  font-size: 23px;
+}
+.about-copy,
+.service-note {
+  padding: 18px;
+}
+.about-copy h3,
+.service-note h3 {
+  margin-bottom: 7px;
+}
+.about-copy ul,
+.service-note ul {
+  margin: 8px 0 0 18px;
+}
+.about-copy li,
+.service-note li {
+  margin-bottom: 3px;
+}
+.review-card {
+  margin-bottom: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+}
+.review-card h4 {
+  margin-bottom: 4px;
+}
+.review-card .rating {
+  margin-bottom: 5px;
+}
+.review-card p {
+  line-height: 1.5;
+  font-size: 14px;
+}
+.review-card small {
+  margin-top: 6px;
+}
+
+@media (max-width: 1100px) {
+  .overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .price-card {
+    grid-column: 1 / -1;
+    position: static;
+  }
+  .price-card .expert-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 18px;
+  }
+  .price-card .trust-box {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-overview {
+    padding: 18px 0 25px;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .gallery,
+  .service-info,
+  .price-card,
+  .expert-card {
+    padding: 16px;
+  }
+  .main-image {
+    height: 260px;
+  }
+  .price-card .expert-summary {
+    display: block;
+  }
+  .expert-stats {
+    gap: 18px;
+  }
+}

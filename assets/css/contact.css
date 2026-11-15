@@ -1,0 +1,304 @@
+/* ==========================================================================
+   CONTACT PAGE STYLES
+   ========================================================================== */
+
+#contact-main {
+  padding: 40px 20px 40px;
+  background-color: var(--color-bg, #f9f9f9);
+  min-height: calc(100vh - 200px);
+}
+
+.contact-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 居中标题 */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  color: var(--color-dark, #2c3e50);
+  margin-bottom: 10px;
+}
+
+/* 主 Container：左右结构 */
+.contact-info-container {
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* 左侧：地址与社交媒体 */
+.contact-details {
+  flex: 1;
+  padding: 40px;
+}
+
+.info-group h2 {
+  font-size: 1.5rem;
+  color: var(--color-dark, #2c3e50);
+  margin-bottom: 24px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.info-icon {
+  font-size: 1.3rem;
+  line-height: 1.4;
+}
+
+.contact-item strong {
+  display: block;
+  color: var(--color-dark, #2c3e50);
+  margin-bottom: 4px;
+}
+
+.contact-item p {
+  color: var(--color-medium, #555);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.info-divider {
+  border: 0;
+  height: 1px;
+  background-color: #eee;
+  margin: 30px 0;
+}
+
+/* 社交媒体区域 */
+.social-media-group h3 {
+  font-size: 1.2rem;
+  color: var(--color-dark, #2c3e50);
+  margin-bottom: 16px;
+}
+
+.social-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.social-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.social-list a:hover {
+  background-color: #eef2f7;
+  transform: translateY(-2px);
+}
+
+.social-icon {
+  font-weight: 600;
+  color: var(--color-primary, #3498db);
+  font-size: 0.9rem;
+}
+
+.social-name {
+  color: var(--color-dark, #333);
+  font-size: 0.9rem;
+}
+
+/* 右侧：Google Map */
+.contact-map {
+  flex: 1;
+  min-height: 450px;
+  background-color: #e5e3df;
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   USER INQUIRY FORM STYLES
+   ========================================================================== */
+.user-inquiry-form-wrapper {
+  text-align: center;
+  margin: 40px 0;
+}
+.user-inquiry-form-wrapper h1 {
+  font-size: 2.5rem;
+  color: var(--color-dark, #2c3e50);
+  margin: 20px;
+}
+
+.user-inquiry-form-wrapper p {
+  font-size: 1.1rem;
+  color: var(--color-medium, #666);
+  margin-bottom: 30px;
+}
+/* 提交反馈提示框 */
+.form-alert {
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: #e8f8f5;
+  color: #27ae60;
+  border: 1px solid #a3e4d7;
+}
+
+.alert-error {
+  background-color: #fadbd8;
+  color: #c0392b;
+  border: 1px solid #f5b7b1;
+}
+
+.inquiry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 并排布局 */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-dark, #2c3e50);
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.required {
+  color: #e74c3c;
+  margin-left: 2px;
+}
+
+/* 表单输入控件基础样式 */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  background-color: #fff;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-medium, #3498db);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+/* 提交按钮 */
+.form-submit-wrapper {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.btn-submit {
+  background-color: var(--color-medium, #3498db);
+  color: #ffffff;
+  border: none;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.btn-submit:hover {
+  background-color: var(--color-dark, #2980b9);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media screen and (max-width: 900px) {
+  .contact-info-container {
+    flex-direction: column;
+  }
+
+  .contact-map {
+    height: 350px;
+    min-height: 350px;
+  }
+
+  .social-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .inquiry-form-wrapper {
+    padding: 24px;
+  }
+
+  .btn-submit {
+    width: 100%;
+  }
+}

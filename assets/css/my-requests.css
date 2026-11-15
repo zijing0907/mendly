@@ -1,0 +1,185 @@
+.my-requests-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.page-header {
+  margin-bottom: 25px;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  color: var(--color-dark, #4a3735);
+  margin-bottom: 5px;
+}
+
+/* 成功提交时的 Alert 提示框 */
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+/* Requests 列表卡片 */
+.request-card {
+  background-color: var(--color-light, #fff);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: var(--transition-fast, all 0.2s ease);
+}
+
+.request-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(169, 136, 133, 0.05);
+  border-bottom: 1px solid rgba(169, 136, 133, 0.15);
+}
+
+.request-info {
+  font-size: 0.88rem;
+  color: var(--color-subtle-dark, #666);
+}
+
+.request-info strong {
+  color: var(--color-dark, #4a3735);
+  font-size: 1rem;
+}
+
+/* Status Badge 样式 */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-pending {
+  background-color: #e2e8f0;
+  color: #475569;
+}
+.badge-accepted {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+.badge-progress {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+.badge-ready {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+.badge-cancelled {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.card-body {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+
+.service-img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
+}
+
+.details-wrapper {
+  flex-grow: 1;
+}
+
+.service-title {
+  font-size: 1.1rem;
+  color: var(--color-dark, #4a3735);
+  margin: 0 0 6px 0;
+}
+
+.expert-meta {
+  font-size: 0.88rem;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.desc-box {
+  background-color: #fdfbfb;
+  border: 1px solid #eee;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+.desc-box strong {
+  color: #333;
+}
+
+/* 空状态 Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px dashed #ccc;
+}
+
+.empty-state h3 {
+  color: var(--color-dark, #4a3735);
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.btn-browse {
+  display: inline-block;
+  padding: 10px 24px;
+  background-color: var(--color-dark, #4a3735);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: var(--transition-fast, all 0.2s ease);
+}
+
+.btn-browse:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .card-body {
+    flex-direction: column;
+  }
+  .service-img {
+    width: 100%;
+    height: 160px;
+  }
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

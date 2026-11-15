@@ -1,0 +1,32 @@
+/* Small additions on top of review.css, specific to expert-reviews.php */
+
+.avg-rating{
+  color: #b8860b;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* This page has no editable form, so cards can drop the fixed
+   artisan-photo/content grid gap review.css uses and just read top to
+   bottom on narrow screens too. */
+.expert-review-card{
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.expert-review-card .review-date{
+  margin: 0 0 10px;
+  font-size: 12.5px;
+}
+
+.expert-review-card .summary-stars{
+  margin-bottom: 10px;
+}
+
+.expert-review-card .summary-stars .star{
+  font-size: 18px;
+}
+
+.expert-review-card .thumb{
+  width: 72px;
+  height: 72px;
+}

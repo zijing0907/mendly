@@ -1,0 +1,789 @@
+/* ===================================================
+   1. GLOBAL VARIABLES & RESET (全局变量与初始化)
+   =================================================== */
+:root {
+  /* Color Token Specifications (RGBA Format) */
+  --color-light: rgba(249, 246, 240, 1); /* Light Oat White (背景) */
+  --color-medium: rgba(169, 136, 133, 1); /* Lotus Rose (品牌/强调色) */
+  --color-dark: rgba(74, 55, 53, 1); /* Caramel Dark Brown (主文字/动作) */
+  --color-subtle-dark: rgba(122, 98, 96, 1); /* Muted Cocoa (次要文字) */
+
+  /* 透明度延伸版 (用于分割线、深色背景等) */
+  --color-dark-80: rgba(74, 55, 53, 0.9); /* Footer 深色背景 */
+  --color-dark-90: rgba(74, 55, 53, 0.98); /* Copyright 最深底色 */
+  --color-light-80: rgba(249, 246, 240, 0.8); /* 深色背景上的副文字 */
+
+  --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --transition-fast: all 0.3s ease;
+}
+
+/* 基础重置 (CSS Reset) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--color-dark);
+  line-height: 1.6;
+  overflow-x: hidden; /* 防止右侧 Drawer 隐藏时出现横向滚动条 */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* ===================================================
+   2. HEADER & NAVIGATION LAYOUT (导航栏布局 - 已适配 RGBA Token)
+   =================================================== */
+.main-header {
+  background-color: var(--color-light);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(74, 55, 53, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100; /* 确保 Header 在最上层 */
+  font-family: var(
+    --font-main
+  ); /* lock header font so it doesn't inherit each page's body font */
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo 区域 */
+#logo-group {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 80px;
+  height: 70px;
+  object-fit: fill;
+}
+
+/* ---------------------------------------------------
+   Desktop 专属：头像与下拉菜单 (Desktop User Profile)
+   --------------------------------------------------- */
+.profile-dropdown-wrapper {
+  position: relative;
+}
+
+.avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-medium, #a98885);
+  transition: var(--transition-fast);
+}
+
+.avatar-btn:hover .user-avatar {
+  border-color: var(--color-dark);
+}
+
+/* 桌面端头像点击后的下拉菜单浮层 */
+.profile-dropdown-menu {
+  display: none; /* 默认隐藏，JS 切换 .show */
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background-color: var(--color-light, #ffffff);
+  min-width: 180px;
+  box-shadow: 0 4px 15px rgba(74, 55, 53, 0.15);
+  border-radius: 8px;
+  padding: 10px 0;
+  z-index: 1001;
+  border: 1px solid rgba(169, 136, 133, 0.2);
+}
+
+.profile-dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-header {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  color: var(--color-dark);
+}
+
+.profile-dropdown-menu hr {
+  border: 0;
+  height: 1px;
+  background-color: rgba(169, 136, 133, 0.2);
+  margin: 6px 0;
+}
+
+.profile-dropdown-menu a {
+  display: block;
+  padding: 10px 20px;
+  color: var(--color-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.profile-dropdown-menu a:hover {
+  background-color: rgba(169, 136, 133, 0.1);
+  color: var(--color-medium);
+}
+
+/* 右侧未登录按钮区域 */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.auth-btn {
+  padding: 8px 18px;
+  background-color: var(--color-medium);
+  color: var(--color-light);
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.auth-btn:hover {
+  background-color: var(--color-dark);
+}
+
+/* ---------------------------------------------------
+   Mobile 专属：Burger 图标样式
+   --------------------------------------------------- */
+#burger-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 22px;
+  padding: 0;
+  z-index: 102;
+  transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.bar {
+  display: block !important;
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-dark);
+  border-radius: 3px;
+  transition: var(--transition-fast);
+}
+
+#burger-menu:hover .bar {
+  background-color: var(--color-medium);
+}
+
+#burger-menu.active {
+  transform: translateX(-200px);
+}
+
+/* ===================================================
+   3. PRIMARY HORIZONTAL NAV (桌面横向主导航)
+   =================================================== */
+#primary-nav {
+  display: flex;
+  align-items: center;
+}
+
+.primary-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.primary-nav-list li a {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  padding: 6px 0;
+  position: relative;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.primary-nav-list li a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--color-medium);
+  transition: var(--transition-fast);
+  border-radius: 2px;
+}
+
+.primary-nav-list li a:hover,
+.primary-nav-list li a.active {
+  color: var(--color-medium);
+}
+
+.primary-nav-list li a:hover::after,
+.primary-nav-list li a.active::after {
+  width: 100%;
+}
+
+/* ===================================================
+   RIGHT DRAWER MENU (移动端/平板抽屉菜单 - 选择器已全量校对)
+   =================================================== */
+
+/* 暗色背景遮罩 */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+  z-index: 101;
+}
+
+.mobile-drawer-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 滑出抽屉主体 */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: -300px; /* 默认隐藏在屏幕右侧外 */
+  width: 280px;
+  height: 100vh;
+  background-color: var(--color-light);
+  box-shadow: -5px 0 15px rgba(74, 55, 53, 0.12);
+  padding: 40px 25px 30px 25px;
+  transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+  z-index: 102;
+  overflow-y: auto;
+}
+
+.mobile-drawer.active {
+  right: 0; /* JS 加上 .active 时滑出 */
+}
+
+/* 抽屉头部与关闭按钮 */
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--color-medium);
+}
+
+.drawer-header h3 {
+  color: var(--color-dark);
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.close-drawer-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--color-dark);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: var(--transition-fast);
+}
+
+.close-drawer-btn:hover {
+  color: var(--color-medium);
+}
+
+/* 分割线 */
+.drawer-divider {
+  border: 0;
+  height: 1px;
+  background-color: rgba(169, 136, 133, 0.2);
+  margin: 15px 0;
+}
+
+/* 抽屉列表链接 */
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.drawer-links li a {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-dark);
+  display: block;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(169, 136, 133, 0.2);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.drawer-links li a:hover {
+  color: var(--color-medium);
+  padding-left: 8px; /* 优雅的右滑悬停 */
+}
+
+/* 分组小标题 */
+.drawer-section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-subtle-dark);
+  margin-top: 10px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  display: block;
+}
+
+/* 未登录下的 Login / Register 按钮 */
+.btn-drawer-login {
+  display: block;
+  text-align: center;
+  padding: 10px 0;
+  background-color: var(--color-medium);
+  color: var(--color-light);
+  border-radius: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 15px;
+  transition: var(--transition-fast);
+}
+
+.btn-drawer-login:hover {
+  background-color: var(--color-dark);
+}
+
+/* 登出链接标红 */
+.btn-logout {
+  color: #e74c3c !important;
+}
+/* ===================================================
+   5. RESPONSIVE BREAKPOINTS (精准匹配你的 ID 命名)
+   =================================================== */
+
+/* 电脑端 (Desktop: >= 1025px) */
+@media screen and (min-width: 1025px) {
+  #primary-nav {
+    display: flex;
+  }
+  .header-right {
+    display: flex;
+  }
+  #burger-menu {
+    display: none !important; /* 电脑端彻底隐藏 Burger 按钮 */
+  }
+  #nav-menu {
+    display: none !important; /* 电脑端隐藏 Drawer 抽屉 */
+  }
+}
+
+/* 移动端与平板 (Mobile & Tablet: <= 1024px) */
+@media screen and (max-width: 1024px) {
+  #primary-nav {
+    display: none !important; /* 隐藏中间横向导航 */
+  }
+  .header-right {
+    display: none !important; /* 隐藏右上角 Login/Avatar 按钮（改由 Drawer 承载） */
+  }
+  #burger-menu {
+    display: flex !important; /* 移动端显示 Burger 按钮 */
+  }
+  #nav-menu {
+    display: block; /* 恢复 Drawer 渲染，以便通过 .active 滑出 */
+  }
+}
+/* ===================================================
+   HOMEPAGE MAIN STYLES (已适配 RGBA Color Token)
+   =================================================== */
+#main-content {
+  padding: 40px 0;
+}
+
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Category 整体大区块 */
+.category-section {
+  margin-bottom: 60px;
+}
+
+/* 1. Category 纯标识 Banner 样式 (不可点击) */
+.category-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-dark); /* Lotus Rose */
+  color: var(--color-light); /* Light Oat White */
+  padding: 24px 30px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(169, 136, 133, 0.15);
+  cursor: default; /* 变成普通光标，提示不可点击 */
+}
+
+.banner-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.banner-content p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* 2. 3张/2张卡片打横网格布局 */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.cards-grid-two {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 3. Sub-category 卡片样式 */
+.service-card {
+  background-color: var(--color-light);
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(74, 55, 53, 0.12);
+  border-color: var(--color-medium);
+}
+
+/* 图片区域 */
+.card-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: rgba(169, 136, 133, 0.1);
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 占位符图片 */
+.img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-subtle-dark);
+  font-size: 0.9rem;
+  padding: 15px;
+  text-align: center;
+}
+
+/* 卡片文字描述区 */
+.card-body {
+  padding: 18px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body h3 {
+  font-size: 1.1rem;
+  color: var(--color-dark);
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: var(--color-subtle-dark);
+  line-height: 1.5;
+}
+
+/* 4. 右下角 More Services 按钮 */
+.more-link-wrapper {
+  text-align: right;
+  margin-top: 18px;
+}
+
+.more-link {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.more-link:hover {
+  color: var(--color-medium);
+  padding-right: 4px;
+}
+
+/* 响应式适配 */
+@media screen and (max-width: 900px) {
+  .cards-grid,
+  .cards-grid-two {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+}
+/* ===================================================
+   MODAL NOTIFICATION (弹窗样式)
+   =================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(74, 55, 53, 0.5); /* 遮罩层 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: var(--color-light);
+  padding: 30px 40px;
+  border-radius: 12px;
+  position: relative;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-dark);
+}
+
+#modal-message {
+  font-size: 1rem;
+  color: var(--color-dark);
+  margin-bottom: 20px;
+}
+
+.btn-modal-login {
+  display: inline-block;
+  padding: 8px 20px;
+  background-color: var(--color-medium);
+  color: var(--color-light);
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-modal-login.hidden {
+  display: none;
+}
+
+/* 响应式适配 */
+@media screen and (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: 1fr; /* 手机端切为单列显示 */
+  }
+}
+@media screen and (max-width: 900px) {
+  .cards-grid-two {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+}
+
+/* ===================================================
+   GLOBAL FOOTER (使用 RGBA Color Token)
+   =================================================== */
+#main-footer {
+  background-color: var(--color-dark-80); /* Caramel Dark Brown (带柔和感) */
+  color: var(--color-light); /* Light Oat White */
+  padding-top: 50px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 40px 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+}
+
+/* 左侧品牌与地址区 */
+.footer-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.footer-logo {
+  width: 80px;
+  object-fit: contain;
+}
+
+.footer-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-light);
+  letter-spacing: 1px;
+}
+
+.footer-tagline {
+  font-size: 0.9rem;
+  color: var(--color-light-80);
+  margin-bottom: 15px;
+  max-width: 350px;
+  line-height: 1.5;
+}
+
+.footer-address {
+  font-size: 0.85rem;
+  color: var(--color-light-80);
+  line-height: 1.6;
+}
+
+/* 标题样式 */
+.footer-heading {
+  font-size: 1.1rem;
+  color: var(--color-light);
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.footer-heading::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background-color: var(--color-medium); /* Lotus Rose 品牌色下划线 */
+}
+
+/* 中间链接列表 */
+.footer-links ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links ul li a {
+  font-size: 0.9rem;
+  color: var(--color-light-80);
+  transition: var(--transition-fast);
+}
+
+.footer-links ul li a:hover {
+  color: var(--color-medium); /* 悬停变为 Lotus Rose */
+  padding-left: 5px;
+}
+
+/* 右侧社媒 Icon */
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.social-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.85;
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.social-icon:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+}
+
+/* 最底部版权栏 */
+.footer-bottom {
+  background-color: var(--color-dark-90);
+  text-align: center;
+  padding: 18px 20px;
+  font-size: 0.8rem;
+  color: var(--color-light-80);
+  border-top: 1px solid rgba(249, 246, 240, 0.1); /* 利用 RGBA Alpha 做微弱线条 */
+}
+
+/* 响应式适配 */
+@media screen and (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}

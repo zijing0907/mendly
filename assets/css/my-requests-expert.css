@@ -1,0 +1,156 @@
+* {
+    box-sizing: border-box;
+}
+
+.requests-container {
+    width: 92%;
+    max-width: 900px;
+    margin: 40px auto 60px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--color-subtle-dark);
+}
+
+.breadcrumb-current {
+    color: var(--color-dark);
+    font-weight: 600;
+}
+
+.requests-heading {
+    margin-bottom: 28px;
+}
+
+.requests-heading h2 {
+    margin: 0 0 6px;
+    font-family: Georgia, serif;
+    font-size: 30px;
+}
+
+.requests-heading p {
+    margin: 0;
+    color: var(--color-subtle-dark);
+}
+
+.requests-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--color-subtle-dark);
+    border: 1px dashed rgba(169, 136, 133, 0.35);
+    border-radius: 16px;
+}
+
+.requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.request-card {
+    display: flex;
+    gap: 18px;
+    padding: 20px;
+    border: 1px solid rgba(169, 136, 133, 0.25);
+    border-radius: 16px;
+    background-color: var(--color-light);
+    box-shadow: 0 10px 26px rgba(74, 55, 53, 0.06);
+}
+
+.request-thumb {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.request-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.request-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.request-top h3 {
+    margin: 0;
+    font-family: Georgia, serif;
+    font-size: 18px;
+}
+
+.status-badge {
+    flex-shrink: 0;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background-color: rgba(169, 136, 133, 0.15);
+    color: var(--color-medium);
+}
+
+.status-pending { background-color: rgba(201, 162, 39, 0.15); color: #9c7c1f; }
+.status-accepted { background-color: rgba(88, 142, 173, 0.15); color: #386884; }
+.status-in-progress { background-color: rgba(169, 136, 133, 0.2); color: var(--color-dark); }
+.status-ready-for-collection { background-color: rgba(94, 158, 94, 0.15); color: #3f7a3f; }
+.status-completed { background-color: rgba(94, 158, 94, 0.25); color: #2e6b2e; }
+.status-cancelled { background-color: rgba(176, 65, 62, 0.15); color: #8f342f; }
+
+.request-meta {
+    margin: 6px 0 10px;
+    font-size: 13px;
+    color: var(--color-subtle-dark);
+}
+
+.request-desc {
+    margin: 0 0 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.request-notes {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--color-subtle-dark);
+    font-style: italic;
+}
+
+.request-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.status-select {
+    padding: 8px 12px;
+    border: 1px solid rgba(169, 136, 133, 0.3);
+    border-radius: 8px;
+    background-color: var(--color-light);
+    font-size: 13px;
+}
+
+.confirm-status-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media screen and (max-width: 560px) {
+    .request-card {
+        flex-direction: column;
+    }
+
+    .request-thumb {
+        width: 100%;
+        height: 160px;
+    }
+}

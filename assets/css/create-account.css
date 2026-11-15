@@ -1,0 +1,366 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-dark);
+  background-color: var(--color-light);
+}
+
+/* Main layout */
+
+.create-account-container {
+  width: 92%;
+  max-width: 1180px;
+
+  margin: 40px auto;
+
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 20px;
+
+  background-color: var(--color-light);
+
+  box-shadow: 0 16px 40px rgba(74, 55, 53, 0.1);
+}
+
+/* Left section - notebook style panel */
+
+.intro-section {
+  position: relative;
+
+  padding: 50px 44px 50px 56px;
+
+  background-color: rgba(169, 136, 133, 0.12);
+  border-right: 1px dashed rgba(169, 136, 133, 0.35);
+}
+
+/* spiral binding, nod to the notebook aesthetic */
+.intro-section::before {
+  content: '';
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  width: 26px;
+
+  background-image: radial-gradient(circle, rgba(169, 136, 133, 0.45) 3px, transparent 3.5px);
+  background-size: 26px 34px;
+  background-position: 13px 20px;
+  background-repeat: repeat-y;
+
+  border-right: 1px solid rgba(169, 136, 133, 0.2);
+}
+
+.intro-section h2 {
+  margin-top: 0;
+
+  font-family: Georgia, serif;
+  font-size: 46px;
+  line-height: 1.1;
+}
+
+.intro-section > p {
+  line-height: 1.7;
+}
+
+.benefit {
+  margin-top: 25px;
+}
+
+.benefit h3 {
+  margin-bottom: 5px;
+  font-family: Georgia, serif;
+  font-size: 18px;
+}
+
+.benefit p {
+  margin-top: 0;
+  color: var(--color-subtle-dark);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Right section */
+
+.selection-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 50px;
+}
+
+.selection-card {
+  width: 100%;
+  max-width: 520px;
+}
+
+.selection-card > h2 {
+  margin-top: 0;
+  margin-bottom: 6px;
+
+  text-align: center;
+
+  font-family: Georgia, serif;
+  font-size: 34px;
+}
+
+.title-underline {
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.title-underline::after {
+  content: '';
+
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+
+  width: 64px;
+  height: 3px;
+
+  background-color: var(--color-medium);
+  border-radius: 3px;
+  transform: translateX(-50%);
+}
+
+.selection-card > h3 {
+  text-align: center;
+  margin: 24px 0 7px;
+
+  font-family: Georgia, serif;
+  font-size: 26px;
+}
+
+.description {
+  text-align: center;
+  margin-top: 0;
+
+  color: var(--color-subtle-dark);
+  line-height: 1.5;
+}
+
+.selection-card h4 {
+  margin-top: 28px;
+  margin-bottom: 14px;
+
+  text-align: center;
+
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+/* Role cards */
+
+.role-card {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 60px 1fr 40px;
+  gap: 16px;
+  align-items: center;
+
+  margin-bottom: 16px;
+  padding: 22px;
+
+  border: 1px solid rgba(169, 136, 133, 0.25);
+  border-radius: 14px;
+
+  color: var(--color-dark);
+  background-color: var(--color-light);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.role-card:hover {
+  border-color: var(--color-medium);
+  background-color: rgba(169, 136, 133, 0.1);
+}
+
+.role-card.selected {
+  border: 2px solid var(--color-medium);
+  background-color: rgba(169, 136, 133, 0.14);
+}
+
+.role-icon {
+  width: 56px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background-color: rgba(169, 136, 133, 0.2);
+
+  font-size: 25px;
+}
+
+.role-content h3 {
+  margin: 0 0 6px;
+
+  font-family: Georgia, serif;
+  font-size: 21px;
+}
+
+.role-content p {
+  margin: 0 0 10px;
+
+  color: var(--color-subtle-dark);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.role-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.role-content li {
+  position: relative;
+
+  margin-bottom: 5px;
+  padding-left: 22px;
+
+  font-size: 13px;
+}
+
+.role-content li::before {
+  content: '✓';
+
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 15px;
+  height: 15px;
+
+  border-radius: 50%;
+  background-color: rgba(169, 136, 133, 0.25);
+
+  color: var(--color-medium);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.arrow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: 1px solid var(--color-medium);
+  border-radius: 50%;
+
+  color: var(--color-medium);
+  font-size: 18px;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.role-card:hover .arrow-icon {
+  background-color: var(--color-medium);
+  color: var(--color-light);
+}
+
+/* Message and link */
+
+.selection-message {
+  min-height: 20px;
+
+  margin-top: 12px;
+
+  color: var(--color-medium);
+  text-align: center;
+  font-weight: bold;
+}
+
+.sign-in-text {
+  margin-top: 25px;
+  text-align: center;
+  color: var(--color-subtle-dark);
+}
+
+.sign-in-text a {
+  color: var(--color-medium);
+  font-weight: bold;
+}
+
+.sign-in-text a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design */
+
+@media screen and (max-width: 850px) {
+  .create-account-container {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-section {
+    border-right: none;
+    border-bottom: 1px dashed rgba(169, 136, 133, 0.35);
+    padding-left: 50px;
+  }
+
+  .selection-section {
+    padding: 40px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .create-account-container {
+    width: 95%;
+  }
+
+  .intro-section {
+    padding: 30px 25px 30px 45px;
+  }
+
+  .selection-section {
+    padding: 25px;
+  }
+
+  .intro-section h2 {
+    font-size: 36px;
+  }
+
+  .role-card {
+    grid-template-columns: 50px 1fr;
+  }
+
+  .role-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .arrow-icon {
+    display: none;
+  }
+}

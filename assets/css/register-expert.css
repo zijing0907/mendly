@@ -1,0 +1,517 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--color-dark);
+    background-color: var(--color-light);
+}
+
+/* Main page layout */
+
+.registration-container {
+    width: 92%;
+    max-width: 1220px;
+
+    margin: 40px auto;
+
+    display: grid;
+    grid-template-columns: 0.85fr 1.3fr;
+    align-items: start;
+    gap: 0;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(169, 136, 133, 0.25);
+    border-radius: 20px;
+
+    background-color: var(--color-light);
+
+    box-shadow: 0 16px 40px rgba(74, 55, 53, 0.1);
+}
+
+/* Left section */
+
+.intro-section {
+    position: relative;
+
+    height: 100%;
+    padding: 50px 44px;
+
+    background-color: rgba(169, 136, 133, 0.12);
+    border-right: 1px dashed rgba(169, 136, 133, 0.35);
+}
+
+.intro-section h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+
+    font-family: Georgia, serif;
+    font-size: 42px;
+    line-height: 1.15;
+}
+
+.intro-section > p {
+    margin-bottom: 0;
+
+    color: var(--color-subtle-dark);
+    line-height: 1.7;
+}
+
+.intro-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+
+    margin-top: 46px;
+    padding-top: 32px;
+
+    border-top: 1px solid rgba(169, 136, 133, 0.25);
+}
+
+.perk-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    margin-bottom: 10px;
+
+    border-radius: 50%;
+    border: 1px solid var(--color-medium);
+
+    color: var(--color-medium);
+    font-size: 16px;
+}
+
+.perk h3 {
+    margin: 0 0 4px;
+
+    font-family: Georgia, serif;
+    font-size: 16px;
+}
+
+.perk p {
+    margin: 0;
+
+    color: var(--color-subtle-dark);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Form section */
+
+.form-section {
+    padding: 40px 48px 48px;
+}
+
+.back-link {
+    margin: 0 0 18px;
+}
+
+.back-link a {
+    color: var(--color-subtle-dark);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.back-link a:hover {
+    color: var(--color-medium);
+}
+
+.registration-form {
+    width: 100%;
+}
+
+.registration-form h2 {
+    margin-top: 0;
+    margin-bottom: 6px;
+
+    font-family: Georgia, serif;
+    font-size: 30px;
+}
+
+.form-description {
+    margin-top: 0;
+    margin-bottom: 26px;
+
+    color: var(--color-subtle-dark);
+    line-height: 1.5;
+}
+
+/* Photo upload */
+
+.photo-group {
+    margin-bottom: 26px;
+}
+
+.photo-upload {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.photo-preview {
+    position: relative;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 78px;
+    height: 78px;
+
+    border: 2px dashed var(--color-medium);
+    border-radius: 50%;
+
+    background-color: rgba(169, 136, 133, 0.12);
+
+    font-size: 26px;
+    color: var(--color-medium);
+    overflow: hidden;
+
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.photo-preview:hover {
+    background-color: rgba(169, 136, 133, 0.2);
+    border-color: var(--color-dark);
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-camera {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+    border: 1px solid rgba(169, 136, 133, 0.3);
+
+    background-color: var(--color-light);
+    font-size: 12px;
+}
+
+.photo-upload-info p {
+    margin: 0 0 8px;
+
+    color: var(--color-subtle-dark);
+    font-size: 13px;
+}
+
+.upload-button {
+    display: inline-block;
+
+    padding: 8px 16px;
+
+    border: 1px solid var(--color-medium);
+    border-radius: 20px;
+
+    color: var(--color-medium);
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.upload-button:hover {
+    background-color: rgba(169, 136, 133, 0.12);
+}
+
+.remove-photo-button {
+    display: inline-block;
+
+    margin-left: 8px;
+    padding: 8px 14px;
+
+    border: none;
+    border-radius: 20px;
+
+    background-color: transparent;
+    color: var(--color-subtle-dark);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.remove-photo-button:hover {
+    color: #b33a2d;
+    text-decoration: underline;
+}
+
+.photo-success {
+    display: block;
+    margin-top: 6px;
+
+    color: #2e7d32;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.photo-hint {
+    display: block;
+    margin-top: 6px;
+
+    color: var(--color-subtle-dark);
+    font-size: 11px;
+}
+
+/* Field rows */
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(169, 136, 133, 0.3);
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    background-color: var(--color-light);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--color-medium);
+    outline: none;
+
+    box-shadow: 0 0 0 3px rgba(169, 136, 133, 0.15);
+}
+
+.password-container {
+    display: flex;
+}
+
+.password-container input {
+    border-radius: 8px 0 0 8px;
+}
+
+.password-container button {
+    min-width: 60px;
+
+    border: 1px solid rgba(169, 136, 133, 0.3);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+
+    color: var(--color-medium);
+    background-color: var(--color-light);
+
+    cursor: pointer;
+}
+
+.error-message {
+    display: block;
+    min-height: 16px;
+
+    margin-top: 5px;
+
+    color: #b33a2d;
+    font-size: 12px;
+}
+
+.character-count {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--color-subtle-dark);
+    font-size: 12px;
+    text-align: right;
+}
+
+.terms-group {
+    margin: 4px 0 22px;
+}
+
+.terms-group label {
+    font-weight: normal;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.terms-group a {
+    color: var(--color-medium);
+    font-weight: 600;
+}
+
+.terms-group input {
+    margin-right: 7px;
+}
+
+.create-button {
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+    border-radius: 10px;
+
+    color: var(--color-light);
+    background-color: var(--color-dark);
+
+    font-weight: bold;
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.create-button:hover {
+    background-color: var(--color-subtle-dark);
+}
+
+.success-message {
+    min-height: 20px;
+
+    margin-top: 15px;
+
+    color: green;
+    text-align: center;
+}
+
+.sign-in-text {
+    margin-top: 18px;
+    text-align: center;
+
+    color: var(--color-subtle-dark);
+    font-size: 14px;
+}
+
+.sign-in-text a {
+    color: var(--color-medium);
+    font-weight: bold;
+}
+
+/* Trust strip */
+
+.trust-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+
+    width: 92%;
+    max-width: 1220px;
+
+    margin: 0 auto 50px;
+    padding: 26px 40px;
+
+    border: 1px solid rgba(169, 136, 133, 0.2);
+    border-radius: 16px;
+
+    background-color: rgba(169, 136, 133, 0.08);
+}
+
+.trust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.trust-icon {
+    font-size: 18px;
+}
+
+.trust-item h4 {
+    margin: 0 0 3px;
+    font-size: 14px;
+}
+
+.trust-item p {
+    margin: 0;
+    color: var(--color-subtle-dark);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Responsive design */
+
+@media screen and (max-width: 900px) {
+    .registration-container {
+        grid-template-columns: 1fr;
+    }
+
+    .intro-section {
+        border-right: none;
+        border-bottom: 1px dashed rgba(169, 136, 133, 0.35);
+    }
+
+    .intro-section,
+    .form-section {
+        padding: 35px;
+    }
+
+    .trust-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .registration-container,
+    .trust-strip {
+        width: 95%;
+    }
+
+    .intro-section,
+    .form-section {
+        padding: 25px;
+    }
+
+    .intro-section h2 {
+        font-size: 34px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .trust-strip {
+        grid-template-columns: 1fr;
+    }
+}
