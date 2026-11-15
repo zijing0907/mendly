@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector('form[action="save-service.php"]');
+    const form = document.querySelector('form[action="actions/save-service.php"]');
 
     if (!form) return;
 
@@ -49,6 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isValid) {
             event.preventDefault();
         }
-        // If valid, let the form submit normally to save-service.php
+        // If valid, let the form submit normally to actions/save-service.php
     });
 });

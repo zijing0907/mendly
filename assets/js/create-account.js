@@ -14,7 +14,7 @@ customerCard.addEventListener("click", function () {
 
     setTimeout(function () {
         window.location.href =
-            "register-customer.php";
+            "pages/register-customer.php";
     }, 700);
 });
 
@@ -28,6 +28,6 @@ expertCard.addEventListener("click", function () {
 
     setTimeout(function () {
         window.location.href =
-            "register-expert.php";
+            "pages/register-expert.php";
     }, 700);
 });

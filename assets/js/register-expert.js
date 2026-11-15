@@ -314,7 +314,7 @@ expertRegistrationForm.addEventListener(
 
         if (isValid) {
             // Client-side checks passed — hand off to the server
-            // (save-expert.php) to validate, hash the password, store the
+            // (actions/save-expert.php) to validate, hash the password, store the
             // photo upload and insert the user + expert rows.
             expertRegistrationForm.submit();
         } else {

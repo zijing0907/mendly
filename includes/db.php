@@ -73,7 +73,7 @@ function prepareOrFail(mysqli $conn, string $sql): mysqli_stmt
 // Drops an automated/system message into the customer<->expert
 // conversation tied to a repair request, creating the conversation if this
 // pair doesn't have one yet. Uses the same "ON DUPLICATE KEY" pattern as
-// chat-send.php, so it never creates a duplicate conversation row.
+// api/chat-send.php, so it never creates a duplicate conversation row.
 //
 // Automated messages are sent as sender_type='expert' by default since
 // they're mostly notifications about work the expert is doing ("your

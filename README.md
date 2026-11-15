@@ -111,25 +111,30 @@ tests/smoke-test.sh http://localhost:8000
 ```
 
 The script logs in as each role, loads every page, and fails on any PHP warning or error, unexpected status
-code, or broken access rule (50 checks). Run it against a freshly seeded database. CI runs the same script
+code, broken access rule, or broken link (130 checks). Run it against a freshly seeded database. CI runs the same script
 on every push.
 
 ## Project structure
 
 ```
-├── index.php, browse-services.php, service-details.php, experts.php, ...   pages
-├── process-*.php, save-*.php, update-*.php, *-action.php                  form handlers (POST → redirect)
-├── chat-*.php, toggle-favorite.php, submit-review.php, ...                JSON endpoints used by fetch()
-├── includes/
-│   ├── db.php          connection, .env loading, shared DB helpers
-│   ├── helpers.php     escaping, role checks, safe upload extensions
-│   ├── header.php, nav.php, footer.php, main.php
-├── admin/              admin login + inquiry inbox
-├── assets/css, assets/js, assets/images
-├── database/           schema + seed data
-├── tests/              end-to-end smoke test
-└── uploads/            user uploads (git-ignored)
+├── index.php        home page (the site's entry point)
+├── pages/           every other page a visitor opens: browse, service details, login, profile, ...
+├── actions/         form handlers: validate the POST, write to the database, redirect back
+├── api/             JSON endpoints called with fetch(): chat, favourites, reviews, request status
+├── includes/        shared code, never requested directly (blocked by .htaccess)
+│   ├── db.php           connection, .env loading, shared database helpers
+│   ├── helpers.php      url()/redirect(), escaping, role checks, safe upload extensions
+│   └── header.php, nav.php, footer.php, main.php, chat-widget.php
+├── admin/           admin login and inquiry inbox
+├── assets/          css/, js/, images/
+├── database/        schema and seed data (blocked by .htaccess)
+├── tests/           end-to-end smoke test
+├── docs/            README screenshots
+└── uploads/         user uploads, git-ignored; scripts can't run here
 ```
+
+Pages print a `<base href>` tag pointing at the project root, and `url()` builds server-side redirects, so
+the app works both at `localhost/mendly/` (XAMPP) and at the web root (`php -S`) with no configuration.
 
 ## Data model
 

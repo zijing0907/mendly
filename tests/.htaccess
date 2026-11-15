@@ -1,0 +1,3 @@
+# Not meant to be requested from a browser: PHP includes these files
+# server-side, and the SQL/test files are for setup only.
+Require all denied

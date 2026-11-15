@@ -249,7 +249,7 @@ customerRegistrationForm.addEventListener(
 
         if (isValid) {
             // Client-side checks passed — hand off to the server
-            // (save-customer.php) to validate, hash the password and
+            // (actions/save-customer.php) to validate, hash the password and
             // insert the new customer row.
             customerRegistrationForm.submit();
         } else {

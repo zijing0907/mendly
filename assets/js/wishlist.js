@@ -33,14 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       heart.disabled = true;
 
-      fetch('toggle-favorite.php', {
+      fetch('api/toggle-favorite.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'service_id=' + encodeURIComponent(serviceId),
       })
         .then((response) => {
           if (response.status === 401) {
-            window.location.href = 'login.php';
+            window.location.href = 'pages/login.php';
             return null;
           }
           return response.json();

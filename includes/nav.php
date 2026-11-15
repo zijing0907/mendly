@@ -10,26 +10,26 @@ $navActive  = fn(string $page): string => (isset($currentPage) && $currentPage =
 
 if ($role === 'expert') {
     $mainLinks = [
-        ['my-services.php',        'My Services',      'my_services'],
-        ['my-requests-expert.php', 'Service Requests', 'expert_requests'],
+        ['pages/my-services.php',        'My Services',      'my_services'],
+        ['pages/my-requests-expert.php', 'Service Requests', 'expert_requests'],
     ];
     $accountLinks = [
-        ['profile.php',            'Profile'],
-        ['my-services.php',        'My Services'],
-        ['add-service.php',        'Add a Service'],
-        ['my-requests-expert.php', 'Service Requests'],
-        ['expert-review.php?expert_id=' . (int) $_SESSION['user_id'], 'My Reviews'],
+        ['pages/profile.php',            'Profile'],
+        ['pages/my-services.php',        'My Services'],
+        ['pages/add-service.php',        'Add a Service'],
+        ['pages/my-requests-expert.php', 'Service Requests'],
+        ['pages/expert-review.php?expert_id=' . (int) $_SESSION['user_id'], 'My Reviews'],
     ];
 } else {
     $mainLinks = [
-        ['browse-services.php', 'Repair Services', 'services'],
-        ['experts.php',         'Experts',         'experts'],
+        ['pages/browse-services.php', 'Repair Services', 'services'],
+        ['pages/experts.php',         'Experts',         'experts'],
     ];
     $accountLinks = [
-        ['profile.php',     'Profile'],
-        ['my-requests.php', 'My Requests'],
-        ['wishlist.php',    'Favorites'],
-        ['review.php',      'Write a Review'],
+        ['pages/profile.php',     'Profile'],
+        ['pages/my-requests.php', 'My Requests'],
+        ['pages/wishlist.php',    'Favorites'],
+        ['pages/review.php',      'Write a Review'],
     ];
 }
 
@@ -43,8 +43,8 @@ $displayName = $_SESSION['full_name'] ?? 'User';
         <?php foreach ($mainLinks as [$href, $label, $key]): ?>
             <li><a href="<?php echo $href; ?>" class="<?php echo $navActive($key); ?>"><?php echo $label; ?></a></li>
         <?php endforeach; ?>
-        <li><a href="about.php" class="<?php echo $navActive('about'); ?>">About Us</a></li>
-        <li><a href="contact.php" class="<?php echo $navActive('contact'); ?>">Contact</a></li>
+        <li><a href="pages/about.php" class="<?php echo $navActive('about'); ?>">About Us</a></li>
+        <li><a href="pages/contact.php" class="<?php echo $navActive('contact'); ?>">Contact</a></li>
     </ul>
 </nav>
 
@@ -70,11 +70,11 @@ $displayName = $_SESSION['full_name'] ?? 'User';
                     <a href="<?php echo e($href); ?>"><?php echo $label; ?></a>
                 <?php endforeach; ?>
                 <hr>
-                <a href="logout.php" class="logout-link">Log Out</a>
+                <a href="actions/logout.php" class="logout-link">Log Out</a>
             </div>
         </div>
     <?php else: ?>
-        <a href="login.php" class="auth-btn">Login / Register</a>
+        <a href="pages/login.php" class="auth-btn">Login / Register</a>
     <?php endif; ?>
 </div>
 
@@ -99,8 +99,8 @@ $displayName = $_SESSION['full_name'] ?? 'User';
         <?php foreach ($mainLinks as [$href, $label]): ?>
             <li><a href="<?php echo $href; ?>"><?php echo $label; ?></a></li>
         <?php endforeach; ?>
-        <li><a href="about.php">About Us</a></li>
-        <li><a href="contact.php">Contact</a></li>
+        <li><a href="pages/about.php">About Us</a></li>
+        <li><a href="pages/contact.php">Contact</a></li>
     </ul>
 
     <hr class="drawer-divider">
@@ -112,10 +112,10 @@ $displayName = $_SESSION['full_name'] ?? 'User';
                 <?php foreach ($accountLinks as [$href, $label]): ?>
                     <li><a href="<?php echo e($href); ?>"><?php echo $label; ?></a></li>
                 <?php endforeach; ?>
-                <li><a href="logout.php" class="btn-logout">Log Out</a></li>
+                <li><a href="actions/logout.php" class="btn-logout">Log Out</a></li>
             </ul>
         <?php else: ?>
-            <a href="login.php" class="btn-drawer-login">Login / Register</a>
+            <a href="pages/login.php" class="btn-drawer-login">Login / Register</a>
         <?php endif; ?>
     </div>
 </div>

@@ -6,7 +6,6 @@
 # User uploads created at runtime (keep the folder's security rules)
 uploads/*
 !uploads/.htaccess
-assets/uploads/
 
 # Tooling
 node_modules/

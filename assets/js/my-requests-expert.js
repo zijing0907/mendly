@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       button.textContent = "Updating...";
 
       try {
-        const res = await fetch("update-request-status.php", {
+        const res = await fetch("api/update-request-status.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: `request_id=${encodeURIComponent(requestId)}&status=${encodeURIComponent(newStatus)}`,

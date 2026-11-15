@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isValid) {
                 event.preventDefault();
             }
-            // If valid, let the form submit normally to update-profile.php
+            // If valid, let the form submit normally to actions/update-profile.php
         });
     }
 
@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isValid) {
                 event.preventDefault();
             }
-            // If valid, let the form submit normally to update-password.php
+            // If valid, let the form submit normally to actions/update-password.php
         });
     }
 
@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!confirmed) {
                 event.preventDefault();
             }
-            // If confirmed, let the form submit normally to delete-account.php
+            // If confirmed, let the form submit normally to actions/delete-account.php
         });
     }
 });

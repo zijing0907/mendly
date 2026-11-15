@@ -78,7 +78,7 @@ function renderEmptyConversation() {
 }
 
 async function loadConversations() {
-  const res = await fetch("chat-fetch.php?action=list");
+  const res = await fetch("api/chat-fetch.php?action=list");
   if (!res.ok) return;
   conversations = await res.json();
 
@@ -171,7 +171,7 @@ async function uploadPendingFile(entry) {
   const formData = new FormData();
   formData.append("attachment", entry.file);
   formData.append("conversation_id", activeId);
-  const res = await fetch("chat-upload.php", { method: "POST", body: formData });
+  const res = await fetch("api/chat-upload.php", { method: "POST", body: formData });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `Failed to upload ${entry.file.name}`);
@@ -249,7 +249,7 @@ function buildMessageRow(m) {
 }
 
 async function loadMessages(conversationId) {
-  const res = await fetch(`chat-fetch.php?action=messages&conversation_id=${conversationId}`);
+  const res = await fetch(`api/chat-fetch.php?action=messages&conversation_id=${conversationId}`);
   if (!res.ok) return;
   const messages = await res.json();
 
@@ -301,7 +301,7 @@ async function sendMessage() {
     renderStagedAttachments();
 
     if (text) {
-      const res = await fetch("chat-send.php", {
+      const res = await fetch("api/chat-send.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_id: activeId, text })

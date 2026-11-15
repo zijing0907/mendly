@@ -3,7 +3,7 @@ const subcount = document.getElementById('subcount');
 const cards = list.querySelectorAll('.card');
 
 // Cards that already had a saved review when the page rendered (server
-// marks them with data-submitted="1" — see review.php) start locked.
+// marks them with data-submitted="1" — see pages/review.php) start locked.
 cards.forEach(card => {
   if (card.dataset.submitted === '1') {
     card.classList.add('submitted');
@@ -43,7 +43,7 @@ list.querySelectorAll('.tags').forEach(group => {
   group.addEventListener('click', e => e.target.matches('.tag') && e.target.classList.toggle('active'));
 });
 
-const MAX_MEDIA_BYTES = 15 * 1024 * 1024; // 15MB — keep in sync with submit-review.php
+const MAX_MEDIA_BYTES = 15 * 1024 * 1024; // 15MB — keep in sync with api/submit-review.php
 
 // Builds a thumbnail element for an uploaded image/video File, or for a
 // {path, type} object already saved on the server.
@@ -149,7 +149,7 @@ cards.forEach(card => {
 
 // Require rating + review text before submitting.
 // On submit, POST everything (rating, tags, text, media) to
-// submit-review.php. Once the server confirms it's saved, the card is
+// api/submit-review.php. Once the server confirms it's saved, the card is
 // locked: the form is replaced with a read-only "See your review"
 // summary built from the server's response, and can no longer be edited.
 cards.forEach(card => {
@@ -208,7 +208,7 @@ cards.forEach(card => {
     submit.textContent = 'Submitting...';
 
     try {
-      const res = await fetch('submit-review.php', { method: 'POST', body: formData });
+      const res = await fetch('api/submit-review.php', { method: 'POST', body: formData });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok || !data.success) {

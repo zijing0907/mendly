@@ -6,6 +6,50 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ---------------------------------------------------------------------
+// URLs
+// ---------------------------------------------------------------------
+// Pages live in pages/, form handlers in actions/ and JSON endpoints in
+// api/, so links can't just be "login.php" any more. basePath() works out
+// the web path of the project root by comparing the running script's URL
+// (SCRIPT_NAME) with its location on disk. That gives "/mendly" under
+// XAMPP (htdocs/mendly) and "" with `php -S`, without any configuration.
+function basePath(): string
+{
+    static $base = null;
+    if ($base !== null) {
+        return $base;
+    }
+
+    $root   = str_replace('\\', '/', (string) realpath(dirname(__DIR__)));
+    $script = str_replace('\\', '/', (string) realpath($_SERVER['SCRIPT_FILENAME'] ?? ''));
+    $name   = $_SERVER['SCRIPT_NAME'] ?? '';
+
+    $base = '';
+    if ($root !== '' && strncasecmp($script, $root, strlen($root)) === 0) {
+        $relative = substr($script, strlen($root));            // e.g. "/pages/login.php"
+        if ($relative !== '' && substr($name, -strlen($relative)) === $relative) {
+            $base = substr($name, 0, -strlen($relative));      // e.g. "/mendly"
+        }
+    }
+    return $base;
+}
+
+// Absolute web path for something in the project, e.g. url('pages/login.php').
+// Every page also prints a <base href> tag pointing at url(), so plain
+// relative links in HTML and JavaScript resolve from the project root too.
+function url(string $path = ''): string
+{
+    return basePath() . '/' . ltrim($path, '/');
+}
+
+// Redirect to a project path and stop.
+function redirect(string $path): never
+{
+    header('Location: ' . url($path));
+    exit;
+}
+
 // Escape a value for HTML output. Accepts NULL (common for optional DB
 // columns) so pages don't trigger "passing null to htmlspecialchars"
 // deprecation warnings on PHP 8.1+.
@@ -37,12 +81,10 @@ function currentRole(): string
 function requireRole(string $role): int
 {
     if (!isset($_SESSION['user_id'])) {
-        header('Location: login.php');
-        exit;
+        redirect('pages/login.php');
     }
     if (currentRole() !== $role) {
-        header('Location: index.php');
-        exit;
+        redirect('index.php');
     }
     return (int) $_SESSION['user_id'];
 }

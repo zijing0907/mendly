@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
       button.disabled = true;
 
       try {
-        const response = await fetch('toggle-favorite.php', {
+        const response = await fetch('api/toggle-favorite.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.status === 401) {
-          window.location.href = 'login.php';
+          window.location.href = 'pages/login.php';
           return;
         }
 

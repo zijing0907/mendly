@@ -16,10 +16,10 @@
             <h4 class="footer-heading">Quick Links</h4>
             <ul>
                 <li><a href="index.php">Home</a></li>
-                <li><a href="browse-services.php">Repair Services</a></li>
-                <li><a href="experts.php">Find Experts</a></li>
-                <li><a href="about.php">About Us</a></li>
-                <li><a href="contact.php">Contact Us</a></li>
+                <li><a href="pages/browse-services.php">Repair Services</a></li>
+                <li><a href="pages/experts.php">Find Experts</a></li>
+                <li><a href="pages/about.php">About Us</a></li>
+                <li><a href="pages/contact.php">Contact Us</a></li>
             </ul>
         </div>
 
@@ -42,4 +42,4 @@
 <!-- Site-wide floating chat widget (only rendered for logged-in users).
      The page that includes this footer closes </body></html> itself. -->
 <link rel="stylesheet" href="assets/css/chat.css">
-<?php include dirname(__DIR__) . '/chat.php'; ?>
+<?php include __DIR__ . '/chat-widget.php'; ?>

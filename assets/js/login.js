@@ -50,7 +50,7 @@ loginForm.addEventListener("submit", function (event) {
 
     if (isValid) {
         // Client-side checks passed — hand off to the server
-        // (process-login.php) to look up the account and verify the
+        // (actions/process-login.php) to look up the account and verify the
         // password hash.
         loginForm.submit();
     }

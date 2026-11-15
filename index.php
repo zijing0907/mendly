@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/helpers.php';   // also starts the session
 $currentPage = 'home';
 ?>
 
@@ -7,6 +7,8 @@ $currentPage = 'home';
 <html lang="en">
 
 <head>
+    <!-- All relative links on this page resolve from the project root -->
+    <base href="<?php echo e(url()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mendly</title>
@@ -15,9 +17,9 @@ $currentPage = 'home';
 </head>
 
 <body>
-    <?php include "includes/header.php"; ?>
-    <?php include "includes/main.php"; ?>
-    <?php include "includes/footer.php"; ?>
+    <?php include __DIR__ . '/includes/header.php'; ?>
+    <?php include __DIR__ . '/includes/main.php'; ?>
+    <?php include __DIR__ . '/includes/footer.php'; ?>
     <script src="assets/js/main.js"></script>
 </body>
 
