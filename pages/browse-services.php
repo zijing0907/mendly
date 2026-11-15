@@ -173,7 +173,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
     <!-- Page title and description -->
     <div class="browse-heading">
-        <h2>Browse Repair Services <span class="heading-leaf">🔍</span></h2>
+        <h2>Browse Repair Services</h2>
         <p>Find a skilled local expert for the repair your item needs.</p>
     </div>
 
@@ -400,7 +400,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
                             <h4 class="service-name"><?php echo htmlspecialchars($row['title']); ?></h4>
 
-                            <p class="card-meta">◎ <?php echo htmlspecialchars($row['full_name']); ?></p>
+                            <p class="card-meta"><?php echo icon('user'); ?> <?php echo htmlspecialchars($row['full_name']); ?></p>
 
                             <!-- Expert and rating information -->
                             <div class="meta-row">
@@ -415,8 +415,8 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
                             </div>
 
                             <div class="meta-row">
-                                <span>◷ <?php echo htmlspecialchars($row['estimated_duration']); ?></span>
-                                <span>⌖ <?php echo htmlspecialchars($row['location']); ?></span>
+                                <span><?php echo icon('clock'); ?> <?php echo htmlspecialchars($row['estimated_duration']); ?></span>
+                                <span><?php echo icon('map-pin'); ?> <?php echo htmlspecialchars($row['location']); ?></span>
                             </div>
 
                             <div class="service-price-row">

@@ -173,7 +173,7 @@ body {
     padding: 8px 16px;
 
     border: 1px solid var(--color-medium);
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     color: var(--color-medium);
     font-size: 13px;
@@ -193,7 +193,7 @@ body {
     padding: 8px 14px;
 
     border: none;
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     background-color: transparent;
     color: var(--color-subtle-dark);
@@ -301,7 +301,7 @@ body {
     padding: 14px;
 
     border: none;
-    border-radius: 7px;
+    border-radius: var(--radius-button);
 
     color: var(--color-light);
     background-color: var(--color-medium);

@@ -160,7 +160,7 @@
   background-color: var(--color-dark, #4a3735);
   color: #fff;
   text-decoration: none;
-  border-radius: 20px;
+  border-radius: var(--radius-button);
   font-weight: 600;
   transition: var(--transition-fast, all 0.2s ease);
 }
@@ -210,7 +210,7 @@
   display: inline-block;
   padding: 8px 16px;
   border: 1px solid var(--color-dark, #4a3735);
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   background: transparent;
   color: var(--color-dark, #4a3735);
   font: inherit;

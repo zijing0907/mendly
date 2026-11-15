@@ -49,13 +49,17 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
   review images) is checked for gore, violence and sexual content before it's saved, using Gemini's image
   understanding with a JSON schema for the verdict
 
-| Browse & filter | Chat with an expert |
+| Browse & filter | Meet the experts |
 | --- | --- |
-| ![Browse services](docs/screenshots/browse-services.jpg) | ![Chat widget](docs/screenshots/chat.jpg) |
+| ![Browse services](docs/screenshots/browse-services.jpg) | ![Experts](docs/screenshots/experts.jpg) |
 
-| Expert dashboard | Mobile menu | Ask Mendly helper |
-| --- | --- | --- |
-| ![My Services](docs/screenshots/expert-services.jpg) | <img src="docs/screenshots/mobile-menu.jpg" alt="Mobile menu" width="200"> | <img src="docs/screenshots/assistant-mobile.jpg" alt="Ask Mendly helper" width="200"> |
+| Chat with an expert | Expert dashboard |
+| --- | --- |
+| ![Chat widget](docs/screenshots/chat.jpg) | ![My Services](docs/screenshots/expert-services.jpg) |
+
+| Mobile menu | Ask Mendly helper |
+| --- | --- |
+| <img src="docs/screenshots/mobile-menu.jpg" alt="Mobile menu" width="220"> | <img src="docs/screenshots/assistant-mobile.jpg" alt="Ask Mendly helper" width="220"> |
 
 ## Tech stack
 
@@ -166,7 +170,7 @@ tests/smoke-test.sh http://localhost:8000
 ```
 
 The script logs in as each role, loads every page, and fails on any PHP warning or error, unexpected status
-code, broken access rule, missing CSRF protection, or broken link (140 checks). Run it against a freshly seeded database. CI runs the same script
+code, broken access rule, missing CSRF protection, or broken link (about 140 checks). Run it against a freshly seeded database. CI runs the same script
 on every push.
 
 ## Project structure
@@ -237,6 +241,8 @@ together. The full list is in the [commit history](https://github.com/zijing0907
 Mendly was built as a four-person group assignment for **UECS2194 Web Application Development** at
 Universiti Tunku Abdul Rahman (UTAR), 2026. The original team repository is
 [wanxi31/WAD_Asgmt](https://github.com/wanxi31/WAD_Asgmt).
+
+Icons are from [Feather Icons](https://feathericons.com) (MIT licence).
 
 ## License
 

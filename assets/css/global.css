@@ -15,9 +15,19 @@
 
   --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --transition-fast: all 0.3s ease;
+
+  /* One shape for every button on the site */
+  --radius-button: 999px;
 }
 
 /* CSS reset */
+
+/* Elements with the hidden attribute stay hidden, even if a class gives
+   them display: inline-block (the photo "Remove" buttons did this) */
+[hidden] {
+  display: none !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -165,7 +175,7 @@ ul {
   padding: 8px 18px;
   background-color: var(--color-medium);
   color: var(--color-light);
-  border-radius: 20px;
+  border-radius: var(--radius-button);
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
@@ -387,7 +397,7 @@ ul {
   padding: 10px 0;
   background-color: var(--color-medium);
   color: var(--color-light);
-  border-radius: 20px;
+  border-radius: var(--radius-button);
   font-weight: 600;
   text-decoration: none;
   margin-top: 15px;
@@ -638,7 +648,7 @@ ul {
   padding: 8px 20px;
   background-color: var(--color-medium);
   color: var(--color-light);
-  border-radius: 20px;
+  border-radius: var(--radius-button);
   text-decoration: none;
   font-weight: 600;
 }
@@ -863,7 +873,7 @@ ul {
 .hero-search button {
   padding: 13px 26px;
   border: none;
-  border-radius: 30px;
+  border-radius: var(--radius-button);
   background-color: var(--color-medium);
   color: #fff;
   font: inherit;
@@ -884,7 +894,7 @@ ul {
 
 .hero-btn {
   padding: 10px 20px;
-  border-radius: 24px;
+  border-radius: var(--radius-button);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -927,4 +937,53 @@ ul {
   .hero-search {
     flex-direction: column;
   }
+}
+
+/* ==========================================================================
+   ICONS (inline SVG from includes/icons.php)
+   ========================================================================== */
+.icon {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: -0.18em;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-fill {
+  fill: currentColor;
+}
+
+.icon-star.icon-fill {
+  color: #c9a227;   /* gold rating star */
+}
+
+/* Initials shown when someone has no profile photo */
+.initials-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-medium);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   KEYBOARD FOCUS
+   ========================================================================== */
+/* A clear outline when moving around with the keyboard (not on mouse clicks) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-medium);
+  outline-offset: 2px;
 }

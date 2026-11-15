@@ -317,7 +317,7 @@ background:#5C5350;
 color:#fff;
 border:none;
 padding:9px 20px;
-border-radius:8px;
+border-radius: var(--radius-button);
 font-size:13px;
 font-weight:500;
 cursor:pointer;
@@ -391,7 +391,7 @@ border:1px solid var(--border-strong);
 color:var(--dark);
 font-size:13px;
 padding:8px 16px;
-border-radius:8px;
+border-radius: var(--radius-button);
 cursor:pointer;
 transition:.12s;
 }

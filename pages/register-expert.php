@@ -57,19 +57,19 @@ $formError = isset($_GET['error'])
         <div class="intro-perks">
 
             <div class="perk">
-                <div class="perk-icon">🛡</div>
+                <div class="perk-icon"><?php echo icon('shield'); ?></div>
                 <h3>Grow Your Business</h3>
                 <p>Reach more customers and expand your repair business.</p>
             </div>
 
             <div class="perk">
-                <div class="perk-icon">★</div>
+                <div class="perk-icon"><?php echo icon('star'); ?></div>
                 <h3>Showcase Your Skills</h3>
                 <p>Highlight your expertise and build trust with your work.</p>
             </div>
 
             <div class="perk">
-                <div class="perk-icon">🌿</div>
+                <div class="perk-icon"><?php echo icon('leaf'); ?></div>
                 <h3>Sustainable Impact</h3>
                 <p>Be part of a community that values repair and reduces waste.</p>
             </div>
@@ -409,7 +409,7 @@ $formError = isset($_GET['error'])
 <div class="trust-strip">
 
     <div class="trust-item">
-        <span class="trust-icon">🔒</span>
+        <span class="trust-icon"><?php echo icon('lock'); ?></span>
         <div>
             <h4>Secure & Private</h4>
             <p>Your data is always protected.</p>
@@ -417,7 +417,7 @@ $formError = isset($_GET['error'])
     </div>
 
     <div class="trust-item">
-        <span class="trust-icon">✅</span>
+        <span class="trust-icon"><?php echo icon('check-circle'); ?></span>
         <div>
             <h4>Verified Community</h4>
             <p>Only trusted experts.</p>
@@ -425,7 +425,7 @@ $formError = isset($_GET['error'])
     </div>
 
     <div class="trust-item">
-        <span class="trust-icon">❤</span>
+        <span class="trust-icon"><?php echo icon('heart'); ?></span>
         <div>
             <h4>Support Local</h4>
             <p>Empowering independent craftspeople.</p>

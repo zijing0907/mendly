@@ -123,7 +123,7 @@ body {
     width: 100%;
     padding: 14px;
     border: none;
-    border-radius: 7px;
+    border-radius: var(--radius-button);
     color: var(--color-light);
     background-color: var(--color-medium);
     cursor: pointer;

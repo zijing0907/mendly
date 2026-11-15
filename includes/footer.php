@@ -6,9 +6,9 @@
             </div>
             <p class="footer-tagline">Giving your cherished items a second life with care and craftsmanship.</p>
             <p class="footer-address">
-                📍 <strong>Mendly Studio</strong><br>
-                Lot 2.01, Central Market (Pasar Seni),<br>
-                Jalan Hang Kasturi, 50050 Kuala Lumpur, Malaysia
+                <?php echo icon('map-pin'); ?> <strong>Mendly Studio</strong><br>
+                123, Jalan Bukit Bintang,<br>
+                55100 Kuala Lumpur, Malaysia
             </p>
         </div>
 

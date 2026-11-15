@@ -162,7 +162,7 @@ body {
     display: inline-block;
 
     padding: 11px 22px;
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     font-weight: 600;
     font-size: 14px;

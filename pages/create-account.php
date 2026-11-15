@@ -86,7 +86,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
                     class="role-card"
                     id="customerCard">
                     <div class="role-icon">
-                        👤
+                        <?php echo icon('user'); ?>
                     </div>
 
                     <div class="role-content">
@@ -114,7 +114,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
                     class="role-card"
                     id="expertCard">
                     <div class="role-icon">
-                        🛠
+                        <?php echo icon('tool'); ?>
                     </div>
 
                     <div class="role-content">

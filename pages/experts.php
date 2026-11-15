@@ -38,7 +38,17 @@ $sql = "SELECT
             e.avatar_mime,
             e.verified,
             GROUP_CONCAT(DISTINCT c.category_name ORDER BY c.category_name SEPARATOR ', ') AS specialisation,
-            GROUP_CONCAT(DISTINCT c.category_group) AS category_groups
+            GROUP_CONCAT(DISTINCT c.category_group) AS category_groups,
+            -- A photo of their work, for experts without a profile photo:
+            -- the cover image of their first active service
+            (SELECT COALESCE(
+                        (SELECT si.image_path FROM service_images si
+                         WHERE si.service_id = s2.service_id ORDER BY si.display_order LIMIT 1),
+                        c2.image_path)
+             FROM services s2
+             INNER JOIN categories c2 ON c2.category_id = s2.category_id
+             WHERE s2.expert_id = e.expert_id AND s2.status = 'active'
+             ORDER BY s2.service_id LIMIT 1) AS work_photo
         FROM experts e
         LEFT JOIN services s   ON s.expert_id = e.expert_id AND s.status = 'active'
         LEFT JOIN categories c ON c.category_id = s.category_id
@@ -99,20 +109,25 @@ if ($result) {
         <!-- Expert cards -->
         <div class="experts-list">
             <?php foreach ($experts as $expert):
-                // Business photo first, then personal avatar, then the stock image
+                // Business photo, then personal photo, then a photo of their
+                // work; experts with none of those get their initials
                 $photo = imageDataUri($expert['photo_path'], $expert['photo_path_mime'])
-                    ?? imageDataUri($expert['avatar'], $expert['avatar_mime'], 'assets/images/default-expert.jpg');
+                    ?? imageDataUri($expert['avatar'], $expert['avatar_mime'])
+                    ?? $expert['work_photo'];
                 $years = (int) ($expert['years_experience'] ?? 0);
             ?>
                 <div class="expert-card">
                     <div class="expert-img-wrapper">
-                        <img
-                            src="<?php echo htmlspecialchars($photo); ?>"
-                            alt="<?php echo htmlspecialchars($expert['business_name']); ?>"
-                            class="expert-img"
-                            onerror="this.src='assets/images/default-expert.jpg';">
+                        <?php if ($photo): ?>
+                            <img
+                                src="<?php echo e($photo); ?>"
+                                alt="<?php echo e($expert['business_name']); ?>"
+                                class="expert-img">
+                        <?php else: ?>
+                            <div class="expert-img expert-initials" aria-hidden="true"><?php echo e(nameInitials($expert['full_name'])); ?></div>
+                        <?php endif; ?>
                         <?php if (!empty($expert['verified'])): ?>
-                            <span class="verified-badge">✓ Verified</span>
+                            <span class="verified-badge"><?php echo icon('check-circle'); ?> Verified</span>
                         <?php endif; ?>
                     </div>
 
@@ -130,10 +145,10 @@ if ($result) {
 
                             <div class="expert-stats">
                                 <span class="stat-item">
-                                    🏅 <strong><?php echo $years > 0 ? $years : e($expert['experience']); ?></strong> Years Experience
+                                    <?php echo icon('award'); ?> <strong><?php echo $years > 0 ? $years : e($expert['experience']); ?></strong> Years Experience
                                 </span>
                                 <span class="stat-item">
-                                    🛠️ <strong><?php echo (int)($expert['completed_repairs'] ?? 0); ?></strong> Repairs Completed
+                                    <?php echo icon('tool'); ?> <strong><?php echo (int)($expert['completed_repairs'] ?? 0); ?></strong> Repairs Completed
                                 </span>
                             </div>
 

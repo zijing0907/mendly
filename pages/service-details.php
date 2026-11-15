@@ -125,8 +125,9 @@ ORDER BY r.review_date DESC
     $imageList[] = ['image_path' => $service['category_image'], 'caption' => $service['category_name']];
     }
 
-    // Expert avatars are stored as image bytes in the database
-    $expertAvatar = imageDataUri($service['avatar'], $service['avatar_mime'], 'assets/images/default-expert.jpg');
+    // Expert avatars are stored as image bytes in the database; no photo
+    // means we show their initials instead
+    $expertAvatar = imageDataUri($service['avatar'], $service['avatar_mime']);
     $viewerRole   = currentRole();
     $averageRating = (float) ($service['average_rating'] ?? 0);
     $filledStars   = max(0, min(5, (int) round($averageRating)));
@@ -195,16 +196,20 @@ ORDER BY r.review_date DESC
                     <h1><?php echo htmlspecialchars($service['title']); ?></h1>
                     <p class="service-tagline">Careful repair by a trusted local specialist.</p>
                     <div class="rating">
-                        ⭐
-                        <?php echo number_format($service['average_rating'] ?? 0, 1); ?>
-                        (<?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'Review' : 'Reviews'; ?>)
+                        <?php echo icon('star', 'icon-fill'); ?>
+                        <?php if ((int) $service['total_reviews'] === 0): ?>
+                            New: no reviews yet
+                        <?php else: ?>
+                            <?php echo number_format($service['average_rating'], 1); ?>
+                            (<?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'Review' : 'Reviews'; ?>)
+                        <?php endif; ?>
                     </div>
                     <p><?php echo nl2br(htmlspecialchars($service['description'])); ?></p>
 
                     <div class="info-list">
-                        <p>📍<?php echo htmlspecialchars($service['location']); ?></p>
-                        <p>⏱<?php echo htmlspecialchars($service['estimated_duration']); ?></p>
-                        <p>👤<?php echo htmlspecialchars($service['full_name']); ?></p>
+                        <p><?php echo icon('map-pin'); ?> <?php echo htmlspecialchars($service['location']); ?></p>
+                        <p><?php echo icon('clock'); ?> <?php echo htmlspecialchars($service['estimated_duration']); ?></p>
+                        <p><?php echo icon('user'); ?> <?php echo htmlspecialchars($service['full_name']); ?></p>
                     </div>
 
                 </div>
@@ -220,8 +225,13 @@ ORDER BY r.review_date DESC
                     </div>
 
                     <div class="price-rating">
-                        <strong><?php echo number_format($averageRating, 1); ?> / 5</strong>
-                        <span>Customer rating from <?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'review' : 'reviews'; ?></span>
+                        <?php if ((int) $service['total_reviews'] === 0): ?>
+                            <strong>New service</strong>
+                            <span>Be the first to leave a review</span>
+                        <?php else: ?>
+                            <strong><?php echo number_format($averageRating, 1); ?> / 5</strong>
+                            <span>Customer rating from <?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'review' : 'reviews'; ?></span>
+                        <?php endif; ?>
                     </div>
 
                     <?php if ($viewerRole === 'expert'): ?>
@@ -244,14 +254,14 @@ ORDER BY r.review_date DESC
                         <?php
                             if ($service['verified']) {
                             ?>
-                            <p>✓ Verified Expert</p>
+                            <p class="verified-line"><?php echo icon('check-circle'); ?> Verified Expert</p>
                         <?php
                             }
                         ?>
 
-                        <p>Experience <?php echo $service['years_experience']; ?> Years</p>
-                        <p>Completed Repairs <?php echo $service['completed_repairs']; ?></p>
-                        <p>Response Rate <?php echo $service['response_rate']; ?>%</p>
+                        <p><?php echo icon('award'); ?> <?php echo (int) $service['years_experience']; ?> years experience</p>
+                        <p><?php echo icon('tool'); ?> <?php echo (int) $service['completed_repairs']; ?> repairs completed</p>
+                        <p><?php echo icon('message'); ?> <?php echo e($service['response_rate']); ?>% response rate</p>
 
                         <div class="trust-box">
                             <p><strong>Secure &amp; trusted</strong></p>
@@ -272,7 +282,11 @@ ORDER BY r.review_date DESC
 
             <div class="expert-card">
                 <div class="expert-avatar">
-                    <img src="<?php echo e($expertAvatar); ?>" alt="<?php echo e($service['full_name']); ?>">
+                    <?php if ($expertAvatar): ?>
+                        <img src="<?php echo e($expertAvatar); ?>" alt="<?php echo e($service['full_name']); ?>">
+                    <?php else: ?>
+                        <span class="initials-avatar expert-avatar-initials" aria-hidden="true"><?php echo e(nameInitials($service['full_name'])); ?></span>
+                    <?php endif; ?>
                 </div>
 
                 <div class="expert-details">
@@ -362,7 +376,7 @@ ORDER BY r.review_date DESC
                         <h4><?php echo htmlspecialchars($review['full_name']); ?></h4>
 
                         <div>
-                            ⭐
+                            <?php echo icon('star', 'icon-fill'); ?>
                             <?php echo $review['rating']; ?>/5
                         </div>
 

@@ -304,7 +304,7 @@ body {
     padding: 7px 14px;
 
     border: 1px solid var(--color-medium);
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     color: var(--color-medium);
     font-size: 13px;
@@ -342,7 +342,7 @@ body {
     display: inline-block;
 
     padding: 11px 22px;
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     font-weight: 600;
     font-size: 14px;
@@ -376,7 +376,7 @@ body {
 
     padding: 11px 22px;
     border: 1px solid var(--color-dark);
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     background-color: var(--color-dark);
     color: var(--color-light);
@@ -423,7 +423,7 @@ body {
 
     padding: 11px 22px;
     border: 1px solid var(--color-dark);
-    border-radius: 20px;
+    border-radius: var(--radius-button);
 
     background-color: var(--color-dark);
     color: var(--color-light);

@@ -44,7 +44,7 @@ $status = $_GET['status'] ?? '';
                         <h2>Our Location & Contact</h2>
 
                         <div class="contact-item">
-                            <span class="info-icon">📍</span>
+                            <span class="info-icon"><?php echo icon('map-pin'); ?></span>
                             <div>
                                 <strong>Address:</strong>
                                 <p>123, Jalan Bukit Bintang, Bukit Bintang,<br>55100 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur, Malaysia</p>
@@ -52,7 +52,7 @@ $status = $_GET['status'] ?? '';
                         </div>
 
                         <div class="contact-item">
-                            <span class="info-icon">📞</span>
+                            <span class="info-icon"><?php echo icon('phone'); ?></span>
                             <div>
                                 <strong>Phone & WhatsApp:</strong>
                                 <p>+60 3-2123 4567 / +60 12-345 6789</p>
@@ -60,7 +60,7 @@ $status = $_GET['status'] ?? '';
                         </div>
 
                         <div class="contact-item">
-                            <span class="info-icon">✉️</span>
+                            <span class="info-icon"><?php echo icon('mail'); ?></span>
                             <div>
                                 <strong>Email:</strong>
                                 <p>support@mendly.my</p>
@@ -68,7 +68,7 @@ $status = $_GET['status'] ?? '';
                         </div>
 
                         <div class="contact-item">
-                            <span class="info-icon">⏰</span>
+                            <span class="info-icon"><?php echo icon('clock'); ?></span>
                             <div>
                                 <strong>Operating Hours:</strong>
                                 <p>Monday – Saturday: 9:00 AM – 6:00 PM<br>Sunday & Public Holidays: Closed</p>

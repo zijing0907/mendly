@@ -389,9 +389,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2><?php echo htmlspecialchars($service['title']); ?></h2>
                 <p class="expert-name">by <?php echo htmlspecialchars($service['full_name']); ?></p>
 
-                <div class="summary-rating">⭐
-                  <?php echo number_format($service['average_rating'] ?? 0, 1); ?>
-                  <span>(<?php echo $service['total_reviews']; ?> Reviews)</span>
+                <div class="summary-rating"><?php echo icon('star', 'icon-fill'); ?>
+                  <?php if ((int) $service['total_reviews'] === 0): ?>
+                    <span>New: no reviews yet</span>
+                  <?php else: ?>
+                    <?php echo number_format($service['average_rating'], 1); ?>
+                    <span>(<?php echo (int) $service['total_reviews']; ?> <?php echo (int) $service['total_reviews'] === 1 ? 'Review' : 'Reviews'; ?>)</span>
+                  <?php endif; ?>
                 </div>
               </div>
 

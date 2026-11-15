@@ -310,7 +310,7 @@ a {
   margin-bottom: 28px;
   background: var(--color-medium);
   color: #fff;
-  border-radius: 16px;
+  border-radius: var(--radius-button);
   font-size: 16px;
   font-weight: 600;
   transition: 0.3s;
@@ -330,7 +330,7 @@ a {
 .favorite-btn,
 .profile-btn {
   border: 1px solid var(--color-medium);
-  border-radius: 12px;
+  border-radius: var(--radius-button);
   color: var(--color-medium);
   background: transparent;
   font: inherit;
@@ -786,7 +786,7 @@ body {
 .request-btn {
   padding: 10px;
   margin-bottom: 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-button);
   font-size: 14px;
 }
 .favorite-btn {
@@ -952,4 +952,36 @@ body {
 a.profile-btn {
   display: inline-block;
   text-decoration: none;
+}
+
+/* Expert with no profile photo: initials in the same circle */
+.expert-avatar-initials {
+  width: 130px;
+  height: 130px;
+  border: 5px solid rgba(169, 136, 133, 0.15);
+  font-size: 2.6rem;
+}
+
+/* Icon + text side by side (overrides the older label/value layout) */
+.info-list p,
+.expert-summary p {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  text-align: left;
+}
+
+.info-list .icon,
+.expert-summary .icon {
+  color: var(--color-medium);
+}
+
+.verified-line {
+  color: #2e7d4f;
+  font-weight: 600;
+}
+
+.verified-line .icon {
+  color: #2e7d4f;
 }
