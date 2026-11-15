@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 /** @var mysqli $conn */
 
 header('Content-Type: application/json');
@@ -65,6 +66,17 @@ if (!isset($allowedTypes[$mimeType])) {
   http_response_code(400);
   echo json_encode(['error' => 'Unsupported file type — images or MP4 video only']);
   exit;
+}
+
+// AI safety check for images (skipped if AI is off). Videos aren't checked:
+// they're too large to send inline on Gemini's free tier.
+if (strpos($mimeType, 'image/') === 0) {
+  $rejection = photoRejectionReason($file['tmp_name']);
+  if ($rejection !== null) {
+    http_response_code(400);
+    echo json_encode(['error' => $rejection]);
+    exit;
+  }
 }
 
 $ext = $allowedTypes[$mimeType];

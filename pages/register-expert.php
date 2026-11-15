@@ -7,6 +7,7 @@ $errorMessages = [
     'duplicate_email'     => 'That email address is already registered. Try signing in instead.',
     'photo_invalid_type'  => 'Your photo must be a JPG or PNG file (HEIC and other formats are not supported).',
     'photo_too_large'     => 'Your photo must be smaller than 5MB.',
+    'photo_rejected'      => "That photo didn't pass our safety check (no blood, violence, nudity or other disturbing content). Please choose a different photo.",
     'photo_upload_failed' => 'We could not save your photo. Please try a different file.',
     'photo_folder_error'  => 'The server could not access the photo upload folder. Please tell your dev team (this usually means assets/uploads/ needs to be created or made writable).',
     'server_error'        => 'Something went wrong on our end. Please try again.',

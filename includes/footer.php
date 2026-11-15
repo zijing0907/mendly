@@ -43,3 +43,6 @@
      The page that includes this footer closes </body></html> itself. -->
 <link rel="stylesheet" href="assets/css/chat.css">
 <?php include __DIR__ . '/chat-widget.php'; ?>
+
+<!-- "Ask Mendly" help assistant, for everyone (guests included) -->
+<?php include __DIR__ . '/assistant-widget.php'; ?>

@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 $pageTitle = "Submit Repair Request";
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 
 // Only signed-in customers can submit requests. Guests are sent to log in,
 // experts back to the service page (they can't hire other experts).
@@ -147,6 +148,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       if ($extension === null) {
         $errors[] = "Only JPG, PNG and WEBP images are allowed.";
+        continue;
+      }
+
+      // AI safety check (no gore/violence or sexual content); skipped if AI is off
+      $rejection = photoRejectionReason($tmpName);
+      if ($rejection !== null) {
+        $errors[] = $rejection;
         continue;
       }
 

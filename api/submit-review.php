@@ -6,6 +6,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 // always responds with JSON rather than a redirect.
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'customer') {
@@ -52,6 +53,22 @@ if (mysqli_fetch_assoc(mysqli_stmt_get_result($existsStmt))) {
   http_response_code(409);
   echo json_encode(['error' => 'You already reviewed this request.']);
   exit;
+}
+
+// AI safety check on attached photos before anything is saved (skipped if
+// AI is off; videos aren't checked)
+if (isset($_FILES['media']['tmp_name']) && is_array($_FILES['media']['tmp_name'])) {
+  foreach (array_slice($_FILES['media']['tmp_name'], 0, 3, true) as $i => $tmpName) {
+    if ($_FILES['media']['error'][$i] !== UPLOAD_ERR_OK || strpos((string) mime_content_type($tmpName), 'image/') !== 0) {
+      continue;
+    }
+    $rejection = photoRejectionReason($tmpName);
+    if ($rejection !== null) {
+      http_response_code(400);
+      echo json_encode(['error' => $rejection]);
+      exit;
+    }
+  }
 }
 
 $insertStmt = prepareOrFail($conn, "INSERT INTO reviews (request_id, rating, comment) VALUES (?, ?, ?)");

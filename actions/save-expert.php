@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/register-expert.php'));
@@ -99,6 +100,11 @@ if (isset($_FILES['businessPhoto']) && $_FILES['businessPhoto']['error'] !== UPL
     if ($_FILES['businessPhoto']['size'] > 5 * 1024 * 1024) {
         header('Location: ' . url('pages/register-expert.php?error=photo_too_large'));
         exit;
+    }
+
+    // AI safety check (no gore/violence or sexual content); skipped if AI is off
+    if (photoRejectionReason($_FILES['businessPhoto']['tmp_name']) !== null) {
+        redirect('pages/register-expert.php?error=photo_rejected');
     }
 
     $photoData = file_get_contents($_FILES['businessPhoto']['tmp_name']);

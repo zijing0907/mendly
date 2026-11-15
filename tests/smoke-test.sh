@@ -140,6 +140,18 @@ checks=$((checks + 1))
 code=$(curl -s -o /dev/null -w '%{http_code}' -d email=emily@gmail.com --data-urlencode "password=$PASSWORD" "$BASE/actions/process-login.php")
 [[ "$code" == "403" ]] || fail "actions/process-login.php accepted a login without a CSRF token (HTTP $code)"
 
+echo "== Help assistant (no AI key: built-in search + FAQ)"
+GT=$(token "$G" index.php)
+checks=$((checks + 1))
+reply=$(curl -s -b "$G" -c "$G" -H "X-CSRF-Token: $GT" -H 'Content-Type: application/json' \
+  -d '{"messages":[{"role":"user","text":"my teddy bear arm is torn"}]}' "$BASE/api/assistant.php")
+[[ "$reply" == *'"source":"faq"'* && "$reply" == *'(service:4)'* ]] \
+  || fail "api/assistant.php didn't suggest the plushie service: $reply"
+checks=$((checks + 1))
+code=$(curl -s -o /dev/null -w '%{http_code}' -b "$G" -H 'Content-Type: application/json' \
+  -d '{"messages":[{"role":"user","text":"hi"}]}' "$BASE/api/assistant.php")
+[[ "$code" == "403" ]] || fail "api/assistant.php accepted a request without a CSRF token (HTTP $code)"
+
 echo "== Links"
 # Every page sets <base href> to the project root, so relative links are
 # resolved from there. Collect the links, form actions, scripts, styles and

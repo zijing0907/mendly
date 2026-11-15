@@ -280,3 +280,16 @@ CREATE TABLE remember_tokens (
 
     INDEX idx_remember_user (user_type, user_id)
 );
+
+-- ============================================================
+-- AI usage counter
+-- ============================================================
+-- How many times each AI feature was used per day, so the site can stop
+-- calling Gemini once a daily limit is reached (see includes/ai.php).
+CREATE TABLE ai_usage (
+    usage_date DATE NOT NULL,
+    feature    VARCHAR(30) NOT NULL,
+    uses       INT NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (usage_date, feature)
+);

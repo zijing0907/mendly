@@ -57,6 +57,7 @@ $errorMessages = [
     'invalid_price'   => 'Please enter a valid starting price.',
     'invalid_photo'   => 'Photos must be JPG, PNG or WEBP images under 5MB each.',
     'too_many_photos' => 'A service can have up to 6 photos. Remove some or upload fewer.',
+    'photo_rejected'  => "One of the photos didn't pass our safety check (no blood, violence, nudity or other disturbing content). Please choose different photos.",
     'server_error'    => 'Something went wrong saving your service. Please try again.',
 ];
 

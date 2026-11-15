@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 
 // Creates a new service (serviceId = 0) or updates one of the expert's own
 // services, including its photos: new uploads are added, ticked photos are
@@ -94,6 +95,14 @@ if ($files && is_array($files['name'])) {
             backWithError($serviceId, 'invalid_photo');
         }
         $newPhotos[] = [$tmpName, $extension];
+    }
+}
+
+// AI safety check on each new photo (skipped if AI is off). Done after the
+// cheap checks so we only send real, allowed-size images to Gemini.
+foreach ($newPhotos as [$tmpName]) {
+    if (photoRejectionReason($tmpName) !== null) {
+        backWithError($serviceId, 'photo_rejected');
     }
 }
 

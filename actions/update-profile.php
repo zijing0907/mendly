@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/profile.php'));
@@ -133,6 +134,10 @@ if ($role === 'expert') {
             exit;
         }
 
+        if (photoRejectionReason($_FILES['businessPhoto']['tmp_name']) !== null) {
+            redirect('pages/profile.php?profile_error=photo_rejected');
+        }
+
         $photoData = file_get_contents($_FILES['businessPhoto']['tmp_name']);
         $photoMime = image_type_to_mime_type($imageInfo[2]);
 
@@ -230,6 +235,10 @@ if ($role === 'expert') {
         if ($_FILES['avatar']['size'] > 5 * 1024 * 1024) {
             header('Location: ' . url('pages/profile.php?profile_error=photo_too_large'));
             exit;
+        }
+
+        if (photoRejectionReason($_FILES['avatar']['tmp_name']) !== null) {
+            redirect('pages/profile.php?profile_error=photo_rejected');
         }
 
         $avatarData = file_get_contents($_FILES['avatar']['tmp_name']);

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/ai.php';
 
 // Only accept form submissions, not direct visits
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -93,6 +94,11 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FIL
     if ($_FILES['avatar']['size'] > 5 * 1024 * 1024) {
         header('Location: ' . url('pages/register-customer.php?error=photo_too_large'));
         exit;
+    }
+
+    // AI safety check (no gore/violence or sexual content); skipped if AI is off
+    if (photoRejectionReason($_FILES['avatar']['tmp_name']) !== null) {
+        redirect('pages/register-customer.php?error=photo_rejected');
     }
 
     $avatarData = file_get_contents($_FILES['avatar']['tmp_name']);

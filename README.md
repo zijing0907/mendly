@@ -41,13 +41,21 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 - Contact form, with an admin inbox (`/admin`) for triaging inquiries
 - Fully responsive layout using only CSS media queries, with a slide-out drawer on mobile
 
+**AI features (optional, free with a Gemini API key)**
+- **Ask Mendly** helper on every page: describe what's broken and it recommends matching services from the
+  live catalogue, with links, and explains how requests, prices and pickup work. Without a key, or when the
+  free quota runs out, it answers from a built-in keyword search and FAQ, so it always works.
+- **Photo safety check**: every uploaded photo (profile pictures, service photos, repair-request photos, chat and
+  review images) is checked for gore, violence and sexual content before it's saved, using Gemini's image
+  understanding with a JSON schema for the verdict
+
 | Browse & filter | Chat with an expert |
 | --- | --- |
 | ![Browse services](docs/screenshots/browse-services.jpg) | ![Chat widget](docs/screenshots/chat.jpg) |
 
-| Expert dashboard | Mobile |
-| --- | --- |
-| ![My Services](docs/screenshots/expert-services.jpg) | <img src="docs/screenshots/mobile-menu.jpg" alt="Mobile menu" width="220"> |
+| Expert dashboard | Mobile menu | Ask Mendly helper |
+| --- | --- | --- |
+| ![My Services](docs/screenshots/expert-services.jpg) | <img src="docs/screenshots/mobile-menu.jpg" alt="Mobile menu" width="200"> | <img src="docs/screenshots/assistant-mobile.jpg" alt="Ask Mendly helper" width="200"> |
 
 ## Tech stack
 
@@ -55,7 +63,8 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 | --- | --- |
 | Front end | HTML5, CSS3 (custom properties, Grid/Flexbox, media queries), vanilla JavaScript (`fetch`, DOM APIs) |
 | Back end | PHP 8 (procedural, `mysqli` prepared statements, sessions) |
-| Database | MySQL 8 / MariaDB, 16 tables with foreign keys and cascades |
+| Database | MySQL 8 / MariaDB, 18 tables with foreign keys and cascades |
+| AI | Google Gemini API over plain REST (cURL): system instructions, image input, JSON-schema output |
 | Tooling | GitHub Actions CI: PHP lint on 8.1–8.3 plus an end-to-end smoke test against a real MySQL |
 
 ## Security notes
@@ -77,6 +86,10 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
   reset, and account deletion.
 - **Password reset:** one-time tokens that expire after 30 minutes. The response is the same whether or not
   the email has an account, so it can't be used to find out who is registered.
+- **AI:** visitors' messages are passed to the model as conversation, never as instructions, and replies are
+  shown as plain text. The widget turns only `[name](service:ID)` into links, so a reply can't inject HTML.
+  The API key is sent in a header, never in a URL. Each visitor gets 20 questions an hour and the site has a
+  daily cap (`AI_DAILY_LIMIT`), so a public demo can't use up the free quota.
 - **Config:** database and mail credentials come from environment variables or a git-ignored `.env`,
   which `.htaccess` stops Apache from serving.
 
@@ -124,6 +137,18 @@ computer, but don't put the site online like that. To send real emails, fill in 
 The SMTP client in `includes/mailer.php` is written from scratch: it handles STARTTLS and AUTH LOGIN with
 no libraries.
 
+### Optional: turn on the AI features (free)
+
+1. Create a free API key at <https://aistudio.google.com/apikey> (sign in with a Google account).
+2. Put it in `.env`: `GEMINI_API_KEY=your-key`.
+
+That's it: the helper starts answering with AI and uploaded photos get checked. Leave the key out and both
+features quietly switch off: the helper uses its built-in search, and photos are accepted. If Gemini is
+down or over its limit, photos are also accepted (and the error is logged) rather than blocking all uploads.
+
+On the free tier Google may use what's sent to improve its products, so use it with demo data, not real
+customers. MP4 videos aren't checked, because they're too large to send inline.
+
 ### Demo accounts
 
 All seed accounts use the password **`ChangeMe!2026`**.
@@ -141,7 +166,7 @@ tests/smoke-test.sh http://localhost:8000
 ```
 
 The script logs in as each role, loads every page, and fails on any PHP warning or error, unexpected status
-code, broken access rule, missing CSRF protection, or broken link (136 checks). Run it against a freshly seeded database. CI runs the same script
+code, broken access rule, missing CSRF protection, or broken link (140 checks). Run it against a freshly seeded database. CI runs the same script
 on every push.
 
 ## Project structure
@@ -156,7 +181,9 @@ on every push.
 │   ├── helpers.php      url()/redirect(), escaping, role checks, CSRF check, safe upload extensions
 │   ├── auth.php         login sessions and "Remember me" tokens
 │   ├── mailer.php       minimal SMTP client for password-reset emails
-│   └── header.php, nav.php, footer.php, main.php, chat-widget.php
+│   ├── ai.php           Gemini API client, daily limits, photo safety check
+│   ├── assistant.php    "Ask Mendly" prompt, live catalogue, FAQ fallback
+│   └── header.php, nav.php, footer.php, main.php, chat-widget.php, assistant-widget.php
 ├── admin/           admin login and inquiry inbox
 ├── assets/          css/, js/, images/
 ├── database/        schema and seed data (blocked by .htaccess)
@@ -187,7 +214,7 @@ erDiagram
     conversations ||--o{ messages : contains
 ```
 
-Also: `password_resets` (one-time reset tokens), `remember_tokens` (Remember me), `inquiries` (contact form) and `admins`.
+Also: `password_resets` (one-time reset tokens), `remember_tokens` (Remember me), `ai_usage` (daily AI limits), `inquiries` (contact form) and `admins`.
 
 ## Post-submission improvements
 
