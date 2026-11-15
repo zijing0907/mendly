@@ -158,8 +158,16 @@ body {
     justify-content: center;
 
     height: 134px;
+    overflow: hidden;
 
     background-color: rgba(169, 136, 133, 0.12);
+}
+
+/* Service photo fills the image area instead of overflowing the card */
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .card-icon {
