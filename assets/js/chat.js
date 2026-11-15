@@ -171,7 +171,7 @@ async function uploadPendingFile(entry) {
   const formData = new FormData();
   formData.append("attachment", entry.file);
   formData.append("conversation_id", activeId);
-  const res = await fetch("api/chat-upload.php", { method: "POST", body: formData });
+  const res = await fetch("api/chat-upload.php", { method: "POST", headers: csrfHeaders(), body: formData });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `Failed to upload ${entry.file.name}`);
@@ -303,7 +303,7 @@ async function sendMessage() {
     if (text) {
       const res = await fetch("api/chat-send.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: csrfHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({ conversation_id: activeId, text })
       });
       if (!res.ok) {

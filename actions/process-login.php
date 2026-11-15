@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/login.php'));
@@ -49,22 +50,12 @@ if (!$account) {
 
 // password_verify() checks the submitted password against the stored hash
 if ($account && password_verify($password, $account['password'])) {
-    // Issue a new session ID now that the user is authenticated, so an
-    // attacker who planted a session ID beforehand can't reuse it.
-    session_regenerate_id(true);
+    // Fresh session ID + user details in the session (includes/auth.php)
+    loginUser($role, $account);
 
-    $_SESSION['user_id']   = $account['id'];
-    $_SESSION['role']      = $role;
-    $_SESSION['full_name'] = $account['full_name'];
-
-    // The avatar is stored as raw binary data in the database, not a file
-    // path — build it into a data URI (a text string with the whole
-    // image encoded inline) so nav.php can keep using it directly as an
-    // <img src="..."> with no other changes needed.
-    if (!empty($account['avatar']) && !empty($account['avatar_mime'])) {
-        $_SESSION['avatar'] = 'data:' . $account['avatar_mime'] . ';base64,' . base64_encode($account['avatar']);
-    } else {
-        $_SESSION['avatar'] = null;
+    // "Remember me" ticked: keep this browser logged in for 30 days
+    if (!empty($_POST['remember'])) {
+        rememberLogin($conn, $role, (int) $account['id']);
     }
 
     // First-ever login for a newly registered expert: send them to set

@@ -30,13 +30,14 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 
 **Repair experts**
 - Self-registration with a business profile; first login goes straight to creating a listing
-- **My Services** dashboard: create, edit, deactivate and delete listings
+- **My Services** dashboard: create, edit, deactivate and delete listings, with up to 6 photos each
 - Manage incoming requests; each status change posts an automatic chat message to the customer
 - Public reviews page
 
 **Everyone / admin**
-- Registration and login for two account types, profile editing with photo upload, password change,
-  password reset by token, account deletion
+- Registration and login for two account types, with **Remember me** (stays signed in for 30 days)
+- Profile editing with photo upload, password change, account deletion
+- Password reset by email over SMTP, or an on-screen link in demo mode when no mail server is configured
 - Contact form, with an admin inbox (`/admin`) for triaging inquiries
 - Fully responsive layout using only CSS media queries, with a slide-out drawer on mobile
 
@@ -69,7 +70,15 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
   names with an extension the server picks, and `uploads/.htaccess` refuses to serve scripts.
 - **Access control:** every page and endpoint checks the role, and every write is scoped to the owner
   (`WHERE ... AND expert_id = ?`), so changing an ID in a request can't touch someone else's data.
-- **Config:** database credentials come from environment variables or a git-ignored `.env`.
+- **CSRF:** every form and `fetch()` call carries a per-session secret token. One check in `helpers.php`,
+  which every PHP file loads first, rejects any POST without it, so new forms are protected automatically.
+- **Remember me:** the cookie holds a random selector and validator, and only a SHA-256 hash of the validator
+  is stored. Tokens are single-use (replaced on every visit) and are revoked on logout, password change or
+  reset, and account deletion.
+- **Password reset:** one-time tokens that expire after 30 minutes. The response is the same whether or not
+  the email has an account, so it can't be used to find out who is registered.
+- **Config:** database and mail credentials come from environment variables or a git-ignored `.env`,
+  which `.htaccess` stops Apache from serving.
 
 ## Getting started
 
@@ -99,6 +108,22 @@ php -S localhost:8000
 
 Then open <http://localhost:8000>. Requires PHP 8.1+ with the `mysqli` extension.
 
+### Optional: send real password-reset emails
+
+By default the site runs in **demo mode**: the reset link is shown on screen. That's fine on your own
+computer, but don't put the site online like that. To send real emails, fill in the `MAIL_*` settings in
+`.env`. With Gmail:
+
+1. Turn on 2-Step Verification for the Google account.
+2. Create an **App Password** at <https://myaccount.google.com/apppasswords>.
+3. In `.env`, set `MAIL_HOST=smtp.gmail.com`, `MAIL_USERNAME` and `MAIL_FROM` to the Gmail address, and
+   `MAIL_PASSWORD` to the 16-character app password with no spaces.
+4. When the site is online, also set `APP_URL` (e.g. `https://mendly.example.com`) so links in emails
+   point to the right address.
+
+The SMTP client in `includes/mailer.php` is written from scratch: it handles STARTTLS and AUTH LOGIN with
+no libraries.
+
 ### Demo accounts
 
 All seed accounts use the password **`ChangeMe!2026`**.
@@ -116,7 +141,7 @@ tests/smoke-test.sh http://localhost:8000
 ```
 
 The script logs in as each role, loads every page, and fails on any PHP warning or error, unexpected status
-code, broken access rule, or broken link (130 checks). Run it against a freshly seeded database. CI runs the same script
+code, broken access rule, missing CSRF protection, or broken link (136 checks). Run it against a freshly seeded database. CI runs the same script
 on every push.
 
 ## Project structure
@@ -128,7 +153,9 @@ on every push.
 ├── api/             JSON endpoints called with fetch(): chat, favourites, reviews, request status
 ├── includes/        shared code, never requested directly (blocked by .htaccess)
 │   ├── db.php           connection, .env loading, shared database helpers
-│   ├── helpers.php      url()/redirect(), escaping, role checks, safe upload extensions
+│   ├── helpers.php      url()/redirect(), escaping, role checks, CSRF check, safe upload extensions
+│   ├── auth.php         login sessions and "Remember me" tokens
+│   ├── mailer.php       minimal SMTP client for password-reset emails
 │   └── header.php, nav.php, footer.php, main.php, chat-widget.php
 ├── admin/           admin login and inquiry inbox
 ├── assets/          css/, js/, images/
@@ -160,7 +187,7 @@ erDiagram
     conversations ||--o{ messages : contains
 ```
 
-Also: `password_resets` (one-time reset tokens), `inquiries` (contact form) and `admins`.
+Also: `password_resets` (one-time reset tokens), `remember_tokens` (Remember me), `inquiries` (contact form) and `admins`.
 
 ## Post-submission improvements
 

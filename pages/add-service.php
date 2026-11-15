@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Must be logged in as an expert - customers don't have services to list.
 $expertId    = requireRole('expert');
@@ -42,10 +42,21 @@ if ($editId > 0) {
 
 $isEdit = $service['service_id'] > 0;
 
+// Photos already attached to this service (edit mode only)
+$photos = [];
+if ($isEdit) {
+    $photoStmt = mysqli_prepare($conn, "SELECT image_id, image_path FROM service_images WHERE service_id = ? ORDER BY display_order");
+    mysqli_stmt_bind_param($photoStmt, 'i', $service['service_id']);
+    mysqli_stmt_execute($photoStmt);
+    $photos = mysqli_fetch_all(mysqli_stmt_get_result($photoStmt), MYSQLI_ASSOC);
+}
+
 $errorMessages = [
     'missing_fields'  => 'Please fill in all required fields.',
     'invalid_category' => 'Please choose a valid category.',
     'invalid_price'   => 'Please enter a valid starting price.',
+    'invalid_photo'   => 'Photos must be JPG, PNG or WEBP images under 5MB each.',
+    'too_many_photos' => 'A service can have up to 6 photos. Remove some or upload fewer.',
     'server_error'    => 'Something went wrong saving your service. Please try again.',
 ];
 
@@ -63,6 +74,7 @@ mysqli_close($conn);
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
 
     <meta
@@ -123,7 +135,8 @@ mysqli_close($conn);
                 <p class="error-message banner-error"><?php echo htmlspecialchars($formError); ?></p>
             <?php endif; ?>
 
-            <form action="actions/save-service.php" method="post" novalidate>
+            <form action="actions/save-service.php" method="post" enctype="multipart/form-data" novalidate>
+                <?php echo csrfField(); ?>
                 <input type="hidden" name="serviceId" value="<?php echo (int) $service['service_id']; ?>">
 
                 <div class="form-row">
@@ -165,6 +178,29 @@ mysqli_close($conn);
                         <input type="text" id="estimatedDuration" name="estimatedDuration" placeholder="e.g. 3-5 Days" value="<?php echo e($service['estimated_duration']); ?>">
                         <span class="error-message" id="estimatedDurationError"></span>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="servicePhotos">Photos of your work <span class="label-optional">(optional, up to 6)</span></label>
+
+                    <?php if ($photos): ?>
+                        <div class="photo-grid">
+                            <?php foreach ($photos as $photo): ?>
+                                <label class="photo-tile">
+                                    <img src="<?php echo e($photo['image_path']); ?>" alt="Current service photo">
+                                    <span class="photo-remove">
+                                        <input type="checkbox" name="removePhotos[]" value="<?php echo (int) $photo['image_id']; ?>"> Remove
+                                    </span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <input type="file" id="servicePhotos" name="servicePhotos[]" accept="image/jpeg,image/png,image/webp" multiple
+                        data-existing="<?php echo count($photos); ?>">
+                    <small class="field-hint">JPG, PNG or WEBP, up to 5MB each. The first photo is the cover customers see.</small>
+                    <div class="photo-grid" id="photoPreview"></div>
+                    <span class="error-message" id="servicePhotosError"></span>
                 </div>
 
                 <div class="add-service-actions">

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/forgot-password.php'));
@@ -45,17 +46,33 @@ if ($account) {
     $insertStmt = mysqli_prepare(
         $conn,
         "INSERT INTO password_resets (email, role, token, expires_at)
-         VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 5 MINUTE))"
+         VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 MINUTE))"
     );
     mysqli_stmt_bind_param($insertStmt, 'sss', $email, $role, $token);
     mysqli_stmt_execute($insertStmt);
     mysqli_stmt_close($insertStmt);
 
-    // No email server is set up for this project, so the reset link is
-    // shown directly on the next page instead of being emailed.
-    $_SESSION['reset_link_preview'] =
-        (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] .
-        url('pages/reset-password.php?token=' . $token);
+    $resetLink = appUrl('pages/reset-password.php?token=' . $token);
+
+    if (mailConfigured()) {
+        // Real mode: email the link. The page says the same thing whether or
+        // not this works, so it never reveals which emails have accounts.
+        sendMail(
+            $email,
+            'Reset your Mendly password',
+            "Hi,\n\n"
+            . "Someone (hopefully you) asked to reset the password for your Mendly account.\n\n"
+            . "Choose a new password here:\n$resetLink\n\n"
+            . "This link works once and expires in 30 minutes. If you didn't ask for this, "
+            . "you can ignore this email and your password stays the same.\n\n"
+            . "- The Mendly team\n"
+        );
+    } else {
+        // Demo mode (no MAIL_HOST in .env): show the link on the next page
+        // instead. Fine on your own computer, but anyone could reset anyone's
+        // password this way, so configure email before putting the site online.
+        $_SESSION['reset_link_preview'] = $resetLink;
+    }
 }
 
 mysqli_close($conn);

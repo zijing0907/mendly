@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $token = $_GET['token'] ?? '';
 $tokenValid = false;
@@ -35,6 +35,7 @@ $formError = $errorMessages[$_GET['error'] ?? ''] ?? null;
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -94,6 +95,7 @@ $formError = $errorMessages[$_GET['error'] ?? ''] ?? null;
             <?php else: ?>
 
                 <form id="resetPasswordForm" class="login-form" method="post" action="actions/update-reset-password.php" novalidate>
+                    <?php echo csrfField(); ?>
 
                     <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
 

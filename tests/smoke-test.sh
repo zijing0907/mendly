@@ -49,10 +49,20 @@ expect() {
   fi
 }
 
+# CSRF token for this cookie jar's session, read from a page.
+# Pages expose it in <meta name="csrf-token">, admin pages in a hidden field.
+token() {
+  local jar="$1" page="$2"
+  curl -s -b "$jar" -c "$jar" "$BASE/$page" \
+    | grep -oE '(name="csrf-token" content|name="csrf_token" value)="[a-f0-9]{64}"' \
+    | grep -oE '[a-f0-9]{64}' | head -1
+}
+
 login() {
   local jar="$1" email="$2"
   curl -s -c "$jar" -b "$jar" -o /dev/null \
     --data-urlencode "email=$email" --data-urlencode "password=$PASSWORD" \
+    --data-urlencode "csrf_token=$(token "$jar" pages/login.php)" \
     "$BASE/actions/process-login.php"
 }
 
@@ -81,6 +91,14 @@ for page in index.php pages/my-requests.php pages/wishlist.php pages/review.php 
 done
 expect "$C" pages/my-services.php 302 index.php
 expect "$C" pages/my-requests-expert.php 302 index.php
+CT=$(token "$C" pages/my-requests.php)
+checks=$((checks + 1))
+curl -s -b "$C" -H "X-CSRF-Token: $CT" -H 'Content-Type: application/json' \
+  -d '{"conversation_id":1,"text":"Smoke test message"}' "$BASE/api/chat-send.php" | grep -q '"message_id"' \
+  || fail "api/chat-send.php rejected a JSON message with a valid CSRF token"
+checks=$((checks + 1))
+curl -s -b "$C" -H "X-CSRF-Token: $CT" -d service_id=3 "$BASE/api/toggle-favorite.php" | grep -q '"favorited"' \
+  || fail "api/toggle-favorite.php rejected a request with a valid CSRF token"
 checks=$((checks + 1))
 curl -s -b "$C" "$BASE/api/chat-fetch.php?action=list" | grep -q '"conversation_id"' \
   || fail "api/chat-fetch.php returned no conversations for a customer"
@@ -96,14 +114,31 @@ expect "$E" "pages/add-service.php?id=2" 302 my-services.php   # another expert'
 expect "$E" pages/my-requests.php 302 index.php
 expect "$E" "pages/submit-request.php?service=2" 302 service-details.php
 checks=$((checks + 1))
-curl -s -b "$E" -d request_id=1 -d status=Completed "$BASE/api/update-request-status.php" | grep -q '"error"' \
+ET=$(token "$E" pages/my-requests-expert.php)
+curl -s -b "$E" -H "X-CSRF-Token: $ET" -d request_id=1 -d status=Completed "$BASE/api/update-request-status.php" | grep -q "can't be moved" \
   || fail "api/update-request-status.php allowed skipping straight to Completed"
 
 echo "== Admin"
 A="$WORK/admin"
-curl -s -c "$A" -b "$A" -o /dev/null -d username=admin --data-urlencode "password=$PASSWORD" "$BASE/admin/login.php"
+curl -s -c "$A" -b "$A" -o /dev/null -d username=admin --data-urlencode "password=$PASSWORD" \
+  --data-urlencode "csrf_token=$(token "$A" admin/login.php)" "$BASE/admin/login.php"
 expect "$A" admin/inquiries.php 200
 expect "$A" "admin/inquiries.php?type=Question" 200
+
+echo "== CSRF"
+# Requests without this session's token must be refused, even when logged in
+checks=$((checks + 1))
+code=$(curl -s -o /dev/null -w '%{http_code}' -b "$C" -d service_id=1 "$BASE/api/toggle-favorite.php")
+[[ "$code" == "403" ]] || fail "api/toggle-favorite.php accepted a POST without a CSRF token (HTTP $code)"
+checks=$((checks + 1))
+code=$(curl -s -o /dev/null -w '%{http_code}' -b "$C" -H "X-CSRF-Token: wrong" -d service_id=1 "$BASE/api/toggle-favorite.php")
+[[ "$code" == "403" ]] || fail "api/toggle-favorite.php accepted a wrong CSRF token (HTTP $code)"
+checks=$((checks + 1))
+code=$(curl -s -o /dev/null -w '%{http_code}' -b "$E" -d service_id=10 -d action=delete "$BASE/actions/service-action.php")
+[[ "$code" == "403" ]] || fail "actions/service-action.php accepted a form without a CSRF token (HTTP $code)"
+checks=$((checks + 1))
+code=$(curl -s -o /dev/null -w '%{http_code}' -d email=emily@gmail.com --data-urlencode "password=$PASSWORD" "$BASE/actions/process-login.php")
+[[ "$code" == "403" ]] || fail "actions/process-login.php accepted a login without a CSRF token (HTTP $code)"
 
 echo "== Links"
 # Every page sets <base href> to the project root, so relative links are

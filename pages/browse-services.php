@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
     // Initialize session, page title, and database connection
     $pageTitle   = 'Browse Services';
     $currentPage = 'services';
-    include __DIR__ . '/../includes/db.php';
+    require_once __DIR__ . '/../includes/db.php';
 
     // Get and process pagination, search, filter, and sorting parameters
     $perPage     = 12;
@@ -144,6 +144,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
 
     <meta

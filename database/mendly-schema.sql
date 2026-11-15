@@ -262,3 +262,21 @@ CREATE TABLE admins (
     password   VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ============================================================
+-- "Remember me" logins
+-- ============================================================
+-- The cookie holds "selector:validator". Only a SHA-256 hash of the
+-- validator is stored, so someone who reads this table still can't log in.
+-- Rows are deleted on logout, password change/reset and account deletion.
+CREATE TABLE remember_tokens (
+    token_id   INT AUTO_INCREMENT PRIMARY KEY,
+    user_type  ENUM('customer', 'expert') NOT NULL,
+    user_id    INT NOT NULL,
+    selector   CHAR(24) NOT NULL UNIQUE,
+    token_hash CHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_remember_user (user_type, user_id)
+);

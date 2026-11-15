@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 // chat message via api/update-request-status.php).
 
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $expertId    = requireRole('expert');
 $currentPage = 'expert_requests';
@@ -52,6 +52,7 @@ $nextSteps = [
 <head>
   <!-- All relative links on this page resolve from the project root -->
   <base href="<?php echo e(url()); ?>">
+  <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Requests | Mendly</title>

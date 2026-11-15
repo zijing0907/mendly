@@ -14,6 +14,7 @@ $linkGenerated = isset($_GET['sent']);
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -57,6 +58,7 @@ $linkGenerated = isset($_GET['sent']);
         <section class="form-section">
 
             <form id="forgotPasswordForm" class="login-form" method="post" action="actions/send-reset-link.php" novalidate>
+                <?php echo csrfField(); ?>
 
                 <h2>Forgot Password</h2>
 
@@ -78,10 +80,11 @@ $linkGenerated = isset($_GET['sent']);
 
                         <?php unset($_SESSION['reset_link_preview']); ?>
                     <?php else: ?>
-                        <h3>Check Your Details</h3>
+                        <h3>Check Your Email</h3>
 
                         <p class="success-message">
-                            If an account exists for that email, a reset link has been generated.
+                            If an account exists for that email, we've sent it a link to reset your password.
+                            The link expires in 30 minutes.
                         </p>
                     <?php endif; ?>
 

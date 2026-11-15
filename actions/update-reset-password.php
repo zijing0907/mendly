@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/forgot-password.php'));
@@ -59,6 +60,18 @@ if (mysqli_stmt_execute($updateStmt)) {
     mysqli_stmt_close($updateStmt);
 
     // Mark the token as used so the same link can't be reused
+    // Password was reset (maybe because the account was compromised):
+    // log out every "Remember me" device
+    $idCol    = $resetRequest['role'] === 'expert' ? 'expert_id' : 'customer_id';
+    $table    = $resetRequest['role'] === 'expert' ? 'experts' : 'customers';
+    $userStmt = mysqli_prepare($conn, "SELECT $idCol AS id FROM $table WHERE email = ?");
+    mysqli_stmt_bind_param($userStmt, 's', $resetRequest['email']);
+    mysqli_stmt_execute($userStmt);
+    $user = mysqli_fetch_assoc(mysqli_stmt_get_result($userStmt));
+    if ($user) {
+        forgetAllLogins($conn, $resetRequest['role'], (int) $user['id']);
+    }
+
     $usedStmt = mysqli_prepare($conn, "UPDATE password_resets SET used = TRUE WHERE reset_id = ?");
     mysqli_stmt_bind_param($usedStmt, 'i', $resetRequest['reset_id']);
     mysqli_stmt_execute($usedStmt);

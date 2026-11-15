@@ -105,3 +105,91 @@ function safeImageExtension(string $tmpPath): ?string
     ];
     return $map[$info[2]] ?? null;
 }
+
+// ---------------------------------------------------------------------
+// CSRF protection
+// ---------------------------------------------------------------------
+// Without this, another website could make a logged-in visitor's browser
+// submit a form to Mendly (change their email, delete a service...) and the
+// browser would helpfully attach their session cookie.
+//
+// Each session gets a random secret. Our pages put it in every form
+// (csrfField) and in a <meta> tag that JavaScript sends back as an
+// X-CSRF-Token header. Another site can trigger the request but can't read
+// the secret, so the check at the bottom of this file rejects it.
+function csrfToken(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrfField(): string
+{
+    return '<input type="hidden" name="csrf_token" value="' . e(csrfToken()) . '">';
+}
+
+// php.ini sizes like "8M" or "512K" in bytes (0 = no limit)
+function iniBytes($value): int
+{
+    $value = trim((string) $value);
+    $bytes = (int) $value;
+    switch (strtoupper(substr($value, -1))) {
+        case 'G': $bytes *= 1024;
+        // no break
+        case 'M': $bytes *= 1024;
+        // no break
+        case 'K': $bytes *= 1024;
+    }
+    return $bytes > 0 ? $bytes : PHP_INT_MAX;
+}
+
+// Stop a POST request that doesn't carry this session's token.
+function verifyCsrf(): void
+{
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+        return;
+    }
+
+    $isApi = strpos($_SERVER['SCRIPT_NAME'] ?? '', '/api/') !== false;
+
+    // When an upload is bigger than PHP's post_max_size, PHP throws the whole
+    // body away, token included. Say what actually went wrong. (JSON bodies
+    // also leave $_POST empty, so compare against the real limit.)
+    if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > iniBytes(ini_get('post_max_size'))) {
+        $message = 'That upload is too large. Please choose smaller files.';
+    } else {
+        $sent = $_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+        if (is_string($sent) && $sent !== '' && hash_equals(csrfToken(), $sent)) {
+            return;
+        }
+        $message = 'Your session has expired. Please go back, refresh the page and try again.';
+    }
+
+    http_response_code(403);
+    if ($isApi) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => $message]);
+    } else {
+        echo '<!DOCTYPE html><meta charset="utf-8"><title>Request blocked</title>'
+            . '<p style="font-family:sans-serif;margin:40px">' . e($message)
+            . ' <a href="' . e(url('index.php')) . '">Back to Mendly</a></p>';
+    }
+    exit;
+}
+
+// ---------------------------------------------------------------------
+// Runs on every request (every page, action and API file loads this first)
+// ---------------------------------------------------------------------
+
+// "Remember me": the session has ended but the browser still has a
+// remember cookie, so log the user back in (see includes/auth.php).
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['mendly_remember'])) {
+    require_once __DIR__ . '/auth.php';
+    restoreRememberedLogin();
+}
+
+// Reject POSTs without this session's CSRF token. New forms and endpoints
+// are protected automatically.
+verifyCsrf();

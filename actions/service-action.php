@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 // Handles the Activate / Deactivate / Delete buttons on pages/my-services.php.
 // Every query is scoped to the logged-in expert, so one expert can never
 // change another expert's listing by editing the posted service_id.
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $expertId = requireRole('expert');
 
@@ -51,7 +51,17 @@ if ($action === 'delete') {
         exit;
     }
 
-    // service_images and favorites rows cascade via their foreign keys
+    // Delete the expert's uploaded photo files. (The service_images and
+    // favorites rows themselves cascade via their foreign keys.)
+    $photoStmt = mysqli_prepare($conn, "SELECT image_path FROM service_images WHERE service_id = ?");
+    mysqli_stmt_bind_param($photoStmt, 'i', $serviceId);
+    mysqli_stmt_execute($photoStmt);
+    foreach (mysqli_fetch_all(mysqli_stmt_get_result($photoStmt), MYSQLI_ASSOC) as $photo) {
+        if (strpos($photo['image_path'], 'uploads/services/') === 0) {
+            @unlink(dirname(__DIR__) . '/' . $photo['image_path']);
+        }
+    }
+
     $stmt = mysqli_prepare($conn, "DELETE FROM services WHERE service_id = ? AND expert_id = ?");
     mysqli_stmt_bind_param($stmt, 'ii', $serviceId, $expertId);
     mysqli_stmt_execute($stmt);

@@ -21,6 +21,7 @@ $formError = isset($_GET['error'])
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
 
     <meta
@@ -84,6 +85,7 @@ $formError = isset($_GET['error'])
             enctype="multipart/form-data"
             novalidate
         >
+            <?php echo csrfField(); ?>
 
             <h2>Customer Registration</h2>
 

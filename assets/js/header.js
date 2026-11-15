@@ -3,6 +3,14 @@
    Site-wide: mobile drawer open/close and the desktop profile dropdown
    ========================================================================== */
 
+// Headers for fetch() calls that change data. Adds this session's CSRF
+// token (printed in a <meta> tag by every page); the server rejects POSTs
+// without it. See includes/helpers.php.
+function csrfHeaders(extra = {}) {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return Object.assign({}, extra, { "X-CSRF-Token": meta ? meta.content : "" });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------------------------
   // 1. MOBILE DRAWER MENU INTERACTION (mobile / tablet)

@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'customer') {
     exit;
 }
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $customerId = (int) $_SESSION['user_id'];
 $serviceId  = (int) ($_POST['service_id'] ?? 0);

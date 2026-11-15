@@ -208,7 +208,7 @@ cards.forEach(card => {
     submit.textContent = 'Submitting...';
 
     try {
-      const res = await fetch('api/submit-review.php', { method: 'POST', body: formData });
+      const res = await fetch('api/submit-review.php', { method: 'POST', headers: csrfHeaders(), body: formData });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok || !data.success) {

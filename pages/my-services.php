@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 // Expert dashboard for their own service listings: see every listing with
 // its request count, edit it, take it off Browse Services (inactive), or
 // delete it outright if no customer has requested it yet.
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $expertId    = requireRole('expert');
 $currentPage = 'my_services';
@@ -47,6 +47,7 @@ $flash = $messages[$_GET['msg'] ?? ''] ?? null;
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Services | Mendly</title>
@@ -122,6 +123,7 @@ $flash = $messages[$_GET['msg'] ?? ''] ?? null;
                             <a href="pages/add-service.php?id=<?php echo (int) $service['service_id']; ?>" class="btn-outline-small">Edit</a>
 
                             <form method="post" action="actions/service-action.php">
+                                <?php echo csrfField(); ?>
                                 <input type="hidden" name="service_id" value="<?php echo (int) $service['service_id']; ?>">
                                 <input type="hidden" name="action" value="<?php echo $isActive ? 'deactivate' : 'activate'; ?>">
                                 <button type="submit" class="btn-outline-small"><?php echo $isActive ? 'Deactivate' : 'Activate'; ?></button>
@@ -129,6 +131,7 @@ $flash = $messages[$_GET['msg'] ?? ''] ?? null;
 
                             <?php if ((int) $service['total_requests'] === 0): ?>
                                 <form method="post" action="actions/service-action.php" onsubmit="return confirm('Delete this service permanently?');">
+                                    <?php echo csrfField(); ?>
                                     <input type="hidden" name="service_id" value="<?php echo (int) $service['service_id']; ?>">
                                     <input type="hidden" name="action" value="delete">
                                     <button type="submit" class="btn-outline-small btn-danger">Delete</button>

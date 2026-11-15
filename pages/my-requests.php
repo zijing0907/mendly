@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
 $pageTitle = "My Repair Requests";
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Customers only. Without the role check an expert would see the requests
 // of whichever customer happens to share their numeric user_id.
@@ -84,6 +84,7 @@ function getStatusBadge($status = 'Pending')
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
@@ -168,6 +169,7 @@ function getStatusBadge($status = 'Pending')
                                     </a>
                                 <?php elseif ($req['status'] === 'Pending'): ?>
                                     <form method="post" action="actions/cancel-request.php" onsubmit="return confirm('Cancel this repair request?');">
+                                        <?php echo csrfField(); ?>
                                         <input type="hidden" name="request_id" value="<?php echo (int) $req['request_id']; ?>">
                                         <button type="submit" class="btn-link btn-link-danger">Cancel request</button>
                                     </form>

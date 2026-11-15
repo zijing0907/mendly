@@ -247,6 +247,7 @@ if ($filterType !== 'All' && in_array($filterType, ['Suggestion', 'Complaint', '
                             </td>
                             <td>
                                 <form method="POST" action="inquiries.php" style="display: flex; gap: 5px;">
+                                    <?php echo csrfField(); ?>
                                     <input type="hidden" name="inquiry_id" value="<?= $row['inquiry_id'] ?>">
                                     <select name="status">
                                         <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>

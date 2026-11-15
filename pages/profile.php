@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $userId = (int) $_SESSION['user_id'];
 $role   = $_SESSION['role'] ?? 'customer';
@@ -119,6 +119,7 @@ $passwordError   = isset($_GET['password_error'])
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
 
     <meta
@@ -247,7 +248,8 @@ $passwordError   = isset($_GET['password_error'])
 
         </div>
 
-        <form id="accountDetailsForm" action="actions/update-profile.php" method="post" enctype="multipart/form-data" novalidate <?php echo $profileError ? '' : 'style="display:none"'; ?>>
+        <form id="accountDetailsForm" action="actions/update-profile.php" method="post" enctype="multipart/form-data" novalidate <?php echo $profileError ? '' : 'style="display:none"'; ?>
+            <?php echo csrfField(); ?>>
 
             <div class="section-divider">
                 <h4>Account Details</h4>
@@ -364,6 +366,7 @@ $passwordError   = isset($_GET['password_error'])
         </form>
 
         <form id="changePasswordForm" action="actions/update-password.php" method="post" novalidate>
+            <?php echo csrfField(); ?>
 
             <div class="section-divider">
                 <h4>Change Password</h4>
@@ -438,7 +441,8 @@ $passwordError   = isset($_GET['password_error'])
 
             </div>
 
-            <form id="deleteAccountForm" action="actions/delete-account.php" method="post" novalidate <?php echo $deleteError ? '' : 'style="display:none"'; ?>>
+            <form id="deleteAccountForm" action="actions/delete-account.php" method="post" novalidate <?php echo $deleteError ? '' : 'style="display:none"'; ?>
+                <?php echo csrfField(); ?>>
 
                 <?php if ($deleteError): ?>
                     <p class="error-message banner-error"><?php echo htmlspecialchars($deleteError); ?></p>

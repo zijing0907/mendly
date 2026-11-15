@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
 $pageTitle = "Submit Repair Request";
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Only signed-in customers can submit requests. Guests are sent to log in,
 // experts back to the service page (they can't hire other experts).
@@ -228,6 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <!-- All relative links on this page resolve from the project root -->
   <base href="<?php echo e(url()); ?>">
+  <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submit Repair Request</title>
@@ -254,6 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
 
             <form action="" method="POST" enctype="multipart/form-data" class="repair-form">
+                <?php echo csrfField(); ?>
 
               <?php if (! empty($errors)) { ?>
                 <div class="error-box">

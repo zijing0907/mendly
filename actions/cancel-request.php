@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 // Lets a customer withdraw one of their own repair requests while it is
 // still Pending. Once the expert has accepted it, cancelling has to go
 // through the expert (via chat), so later statuses are refused.
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $customerId = requireRole('customer');
 

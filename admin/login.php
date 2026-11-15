@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <form method="post" action="login.php">
+        <?php echo csrfField(); ?>
         <h1>Mendly Admin</h1>
 
         <?php if ($error): ?>

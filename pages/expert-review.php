@@ -5,7 +5,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 // "My Reviews" link in their account menu.
 
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $expertId = (int) ($_GET['expert_id'] ?? 0);
 
@@ -84,6 +84,7 @@ function initials(string $name): string
 <head>
   <!-- All relative links on this page resolve from the project root -->
   <base href="<?php echo e(url()); ?>">
+  <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?php echo htmlspecialchars($expert['business_name'] ?: $expert['full_name']); ?> — Reviews | Mendly</title>

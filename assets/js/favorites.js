@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch('api/toggle-favorite.php', {
           method: 'POST',
-          headers: {
+          headers: csrfHeaders({
             'Content-Type': 'application/x-www-form-urlencoded',
-          },
+          }),
           body: 'service_id=' + encodeURIComponent(serviceId),
         });
 

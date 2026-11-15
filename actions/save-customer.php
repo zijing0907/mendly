@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Only accept form submissions, not direct visits
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

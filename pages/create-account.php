@@ -7,6 +7,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
 
     <meta

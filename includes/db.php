@@ -55,6 +55,10 @@ if (!$conn) {
 // utf8mb4 so emoji in chat messages and reviews survive the round trip
 mysqli_set_charset($conn, 'utf8mb4');
 
+// Make the connection global even when this file is first loaded from
+// inside a function (the "Remember me" check in auth.php does that).
+$GLOBALS['conn'] = $conn;
+
 // mysqli_prepare() returns false (not a mysqli_stmt) if the SQL fails to
 // prepare, e.g. a typo in a column/table name. Routing every prepare
 // through this helper means that failure surfaces as a clean JSON error

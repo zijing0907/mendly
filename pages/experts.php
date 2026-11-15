@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 $pageTitle   = "Meet Our Experts";
 $currentPage = 'experts';
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 // Category tab currently selected (?category=...), defaulting to 'all'
 $selectedCategory = $_GET['category'] ?? 'all';
@@ -65,6 +65,7 @@ if ($result) {
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?> | Mendly</title>

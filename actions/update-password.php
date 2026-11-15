@@ -7,7 +7,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/profile.php'));
@@ -68,6 +69,10 @@ mysqli_stmt_bind_param($updateStmt, 'si', $hashedPassword, $userId);
 
 if (mysqli_stmt_execute($updateStmt)) {
     mysqli_stmt_close($updateStmt);
+
+    // New password: any "Remember me" logins on other devices stop working
+    forgetAllLogins($conn, $role, $userId);
+    forgetLogin($conn);
     mysqli_close($conn);
 
     header('Location: ' . url('pages/profile.php?password_updated=1'));

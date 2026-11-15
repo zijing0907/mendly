@@ -14,6 +14,7 @@ $status = $_GET['status'] ?? '';
 <head>
     <!-- All relative links on this page resolve from the project root -->
     <base href="<?php echo e(url()); ?>">
+    <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?></title>
@@ -146,6 +147,7 @@ $status = $_GET['status'] ?? '';
 
                 <!-- Submits to actions/process-inquiry.php -->
                 <form action="actions/process-inquiry.php" method="POST" class="inquiry-form">
+                    <?php echo csrfField(); ?>
 
                     <!-- Row 1: Full Name -->
                     <div class="form-group full-width">

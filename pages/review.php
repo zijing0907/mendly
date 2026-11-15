@@ -21,7 +21,7 @@ if (($_SESSION['role'] ?? '') !== 'customer') {
   exit;
 }
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $customerId = (int) $_SESSION['user_id'];
 
@@ -86,6 +86,7 @@ function initials(string $name): string
 <head>
   <!-- All relative links on this page resolve from the project root -->
   <base href="<?php echo e(url()); ?>">
+  <meta name="csrf-token" content="<?php echo e(csrfToken()); ?>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Write A Review</title>

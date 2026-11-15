@@ -6,7 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-include __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/profile.php'));
@@ -79,6 +80,9 @@ if ($role === 'expert') {
 mysqli_stmt_bind_param($deleteStmt, 'i', $userId);
 
 if (mysqli_stmt_execute($deleteStmt)) {
+    forgetAllLogins($conn, $role, $userId);
+    forgetLogin($conn);
+
     mysqli_stmt_close($deleteStmt);
     mysqli_close($conn);
 
