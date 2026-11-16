@@ -22,7 +22,7 @@ function assistantCatalogue(): array
             INNER JOIN experts e ON e.expert_id = s.expert_id
             LEFT JOIN repair_requests rq ON rq.service_id = s.service_id
             LEFT JOIN reviews r ON r.request_id = rq.request_id
-            WHERE s.status = 'active'
+            WHERE s.status = 'active' AND e.approval_status = 'approved'
             GROUP BY s.service_id
             ORDER BY s.service_id";
     $result = mysqli_query($GLOBALS['conn'], $sql);

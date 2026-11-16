@@ -59,6 +59,13 @@ CREATE TABLE experts (
     average_response_time     VARCHAR(50),
     verified                  BOOLEAN DEFAULT FALSE,
 
+    -- New experts start as 'pending' and stay hidden from customers until
+    -- an admin approves them (admin/experts.php). Defaults to 'approved' so
+    -- experts inserted directly via seed data are live straight away.
+    approval_status           ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved',
+    rejection_reason          VARCHAR(255),
+    reviewed_at               DATETIME,
+
     created_at                TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -292,4 +299,23 @@ CREATE TABLE ai_usage (
     uses       INT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (usage_date, feature)
+);
+
+-- ============================================================
+-- Login protection
+-- ============================================================
+-- Every login / admin login / password-reset attempt, so repeated failures
+-- can be slowed down (see includes/login-guard.php). identifier is the
+-- email or admin username typed in, stored even if no such account exists,
+-- so the limits can't be used to discover which accounts are real.
+CREATE TABLE login_attempts (
+    attempt_id   INT AUTO_INCREMENT PRIMARY KEY,
+    scope        ENUM('login', 'admin', 'reset') NOT NULL,
+    identifier   VARCHAR(190) NOT NULL,
+    ip_address   VARCHAR(45) NOT NULL,
+    success      BOOLEAN NOT NULL DEFAULT FALSE,
+    attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_attempts_identifier (scope, identifier, attempted_at),
+    INDEX idx_attempts_ip (scope, ip_address, attempted_at)
 );

@@ -28,6 +28,12 @@ mysqli_stmt_bind_param($stmt, 'i', $expertId);
 mysqli_stmt_execute($stmt);
 $services = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
 mysqli_stmt_close($stmt);
+
+// Has an admin approved this expert yet? (see admin/experts.php)
+$statusStmt = mysqli_prepare($conn, "SELECT approval_status, rejection_reason FROM experts WHERE expert_id = ?");
+mysqli_stmt_bind_param($statusStmt, 'i', $expertId);
+mysqli_stmt_execute($statusStmt);
+$approval = mysqli_fetch_assoc(mysqli_stmt_get_result($statusStmt));
 mysqli_close($conn);
 
 $messages = [
@@ -75,6 +81,29 @@ $flash = $messages[$_GET['msg'] ?? ''] ?? null;
             </div>
             <a href="pages/add-service.php" class="btn-primary">+ Add a Service</a>
         </div>
+
+        <?php if ($approval['approval_status'] === 'pending'): ?>
+            <div class="approval-banner approval-pending">
+                <?php echo icon('clock'); ?>
+                <div>
+                    <strong>Your expert profile is being reviewed.</strong>
+                    You can set up your services now. Customers will see them once the Mendly team approves
+                    your account, usually within 1-2 working days.
+                </div>
+            </div>
+        <?php elseif ($approval['approval_status'] === 'rejected'): ?>
+            <div class="approval-banner approval-rejected">
+                <?php echo icon('shield'); ?>
+                <div>
+                    <strong>Your expert application wasn't approved.</strong>
+                    <?php if (!empty($approval['rejection_reason'])): ?>
+                        Reason: <?php echo e($approval['rejection_reason']); ?>.
+                    <?php endif; ?>
+                    Your services stay hidden from customers. If you think this is a mistake, please
+                    <a href="pages/contact.php">contact us</a>.
+                </div>
+            </div>
+        <?php endif; ?>
 
         <?php if ($flash): ?>
             <p class="flash flash-<?php echo $flash[0]; ?>"><?php echo e($flash[1]); ?></p>

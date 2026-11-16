@@ -76,10 +76,15 @@ LEFT JOIN (
 ON review_summary.service_id = s.service_id
 
 WHERE s.service_id = ? AND s.status = 'active'
+  AND (u.approval_status = 'approved' OR u.expert_id = ?)
 ";
 
+    // Customers only see approved experts; an expert still waiting for
+    // approval can preview their own listing
+    $viewerExpertId = currentRole() === 'expert' ? (int) $_SESSION['user_id'] : 0;
+
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $serviceID);
+    mysqli_stmt_bind_param($stmt, "ii", $serviceID, $viewerExpertId);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 

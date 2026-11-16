@@ -4,6 +4,7 @@
 // customer/expert logins.
 session_start();
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/login-guard.php';
 
 if (isset($_SESSION['admin_id'])) {
     header('Location: inquiries.php');
@@ -16,12 +17,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    $stmt = mysqli_prepare($conn, "SELECT admin_id, username, password FROM admins WHERE username = ?");
-    mysqli_stmt_bind_param($stmt, 's', $username);
-    mysqli_stmt_execute($stmt);
-    $admin = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    // Same brute-force protection as the customer login (includes/login-guard.php)
+    $waitMinutes = loginLockedMinutes('admin', $username);
 
-    if ($admin && password_verify($password, $admin['password'])) {
+    $admin = null;
+    if ($waitMinutes === 0) {
+        $stmt = mysqli_prepare($conn, "SELECT admin_id, username, password FROM admins WHERE username = ?");
+        mysqli_stmt_bind_param($stmt, 's', $username);
+        mysqli_stmt_execute($stmt);
+        $admin = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    }
+
+    $passwordOk = $waitMinutes === 0 && $admin && password_verify($password, $admin['password']);
+    if ($waitMinutes === 0) {
+        recordLoginAttempt('admin', $username, (bool) $passwordOk);
+    }
+
+    if ($passwordOk) {
         // New session ID on privilege change, so a pre-planted session
         // cookie can't be reused to ride along on this login.
         session_regenerate_id(true);
@@ -31,7 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $error = 'Incorrect username or password.';
+    $error = $waitMinutes > 0
+        ? "Too many failed attempts. Please wait {$waitMinutes} minute" . ($waitMinutes === 1 ? '' : 's') . '.'
+        : 'Incorrect username or password.';
 }
 ?>
 <!DOCTYPE html>

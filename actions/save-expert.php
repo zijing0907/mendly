@@ -127,8 +127,8 @@ $insertExpertStmt = mysqli_prepare(
     "INSERT INTO experts
         (full_name, email, phone, location, password,
          business_name, experience, description,
-         photo_path, photo_path_mime, avatar, avatar_mime, first_login_done)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)"
+         photo_path, photo_path_mime, avatar, avatar_mime, first_login_done, approval_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, 'pending')"
 );
 
 // If the query itself is invalid (e.g. the database schema is out of
@@ -163,7 +163,8 @@ if (mysqli_stmt_execute($insertExpertStmt)) {
     mysqli_stmt_close($insertExpertStmt);
     mysqli_close($conn);
 
-    header('Location: ' . url('pages/login.php?registered=1'));
+    // New experts wait for an admin to approve them (admin/experts.php)
+    redirect('pages/login.php?registered=expert');
     exit;
 } else {
     mysqli_stmt_close($insertExpertStmt);

@@ -52,6 +52,7 @@ $sql = "SELECT
         FROM experts e
         LEFT JOIN services s   ON s.expert_id = e.expert_id AND s.status = 'active'
         LEFT JOIN categories c ON c.category_id = s.category_id
+        WHERE e.approval_status = 'approved'   -- new experts appear once an admin approves them
         GROUP BY e.expert_id
         ORDER BY e.expert_id DESC";
 

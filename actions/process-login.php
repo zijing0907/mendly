@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/login-guard.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/login.php'));
@@ -14,6 +15,13 @@ $password = $_POST['password'] ?? '';
 if ($email === '' || $password === '') {
     header('Location: ' . url('pages/login.php?error=missing_fields'));
     exit;
+}
+
+// Too many wrong passwords recently (for this email or from this IP)?
+// Checked before the password, so a locked account can't be probed.
+$waitMinutes = loginLockedMinutes('login', $email);
+if ($waitMinutes > 0) {
+    redirect('pages/login.php?error=locked&wait=' . $waitMinutes);
 }
 
 // Look up the account by email — check customers first, then experts,
@@ -49,7 +57,10 @@ if (!$account) {
 }
 
 // password_verify() checks the submitted password against the stored hash
-if ($account && password_verify($password, $account['password'])) {
+$passwordOk = $account && password_verify($password, $account['password']);
+recordLoginAttempt('login', $email, $passwordOk);
+
+if ($passwordOk) {
     // Fresh session ID + user details in the session (includes/auth.php)
     loginUser($role, $account);
 

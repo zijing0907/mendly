@@ -36,7 +36,8 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
     }
 
     // Build dynamic SQL conditions and parameters
-    $where  = ["s.status = 'active'"];
+    // Only active services from experts an admin has approved
+    $where  = ["s.status = 'active'", "u.approval_status = 'approved'"];
     $types  = '';
     $params = [];
 
@@ -122,12 +123,12 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
     $categoryResult = mysqli_query($conn, 'SELECT category_id, category_name FROM categories ORDER BY category_id');
     // There is no separate locations table — offer every location an
     // expert has registered with.
-    $locationResult = mysqli_query($conn, "SELECT DISTINCT location AS location_name FROM experts ORDER BY location");
+    $locationResult = mysqli_query($conn, "SELECT DISTINCT location AS location_name FROM experts WHERE approval_status = 'approved' ORDER BY location");
 
     // When arriving from the Experts page (?expert=ID), show whose services these are
     $expertName = null;
     if ($expertId > 0) {
-    $expertStmt = mysqli_prepare($conn, 'SELECT COALESCE(NULLIF(business_name, \'\'), full_name) AS name FROM experts WHERE expert_id = ?');
+    $expertStmt = mysqli_prepare($conn, 'SELECT COALESCE(NULLIF(business_name, \'\'), full_name) AS name FROM experts WHERE expert_id = ? AND approval_status = \'approved\'');
     mysqli_stmt_bind_param($expertStmt, 'i', $expertId);
     mysqli_stmt_execute($expertStmt);
     $expertName = mysqli_fetch_assoc(mysqli_stmt_get_result($expertStmt))['name'] ?? null;

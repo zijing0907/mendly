@@ -987,3 +987,20 @@ textarea:focus-visible {
   outline: 2px solid var(--color-medium);
   outline-offset: 2px;
 }
+
+/* ==========================================================================
+   FORM ERROR BANNER (login, sign-up, forgot / reset password)
+   ========================================================================== */
+.form-error-banner {
+    margin: 0 0 20px;
+    padding: 12px 16px;
+
+    border: 1px solid rgba(176, 65, 62, 0.35);
+    border-radius: 10px;
+
+    background-color: rgba(176, 65, 62, 0.08);
+    color: #8f342f;
+
+    font-size: 14px;
+    line-height: 1.4;
+}

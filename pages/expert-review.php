@@ -14,8 +14,14 @@ if (!$expertId) {
   exit;
 }
 
-$expertStmt = mysqli_prepare($conn, "SELECT expert_id, full_name, business_name FROM experts WHERE expert_id = ?");
-mysqli_stmt_bind_param($expertStmt, 'i', $expertId);
+// Approved experts only (or the expert looking at their own page)
+$viewerExpertId = currentRole() === 'expert' ? (int) $_SESSION['user_id'] : 0;
+$expertStmt = mysqli_prepare(
+  $conn,
+  "SELECT expert_id, full_name, business_name FROM experts
+   WHERE expert_id = ? AND (approval_status = 'approved' OR expert_id = ?)"
+);
+mysqli_stmt_bind_param($expertStmt, 'ii', $expertId, $viewerExpertId);
 mysqli_stmt_execute($expertStmt);
 $expert = mysqli_fetch_assoc(mysqli_stmt_get_result($expertStmt));
 mysqli_stmt_close($expertStmt);

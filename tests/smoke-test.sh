@@ -20,6 +20,10 @@ trap 'rm -rf "$WORK"' EXIT
 failures=0
 checks=0
 
+# Note: with pipefail on, `curl ... | grep -q` can report a failure even when
+# grep finds a match (grep exits early and curl gets cut off), so content
+# checks save the page into a variable first and then look inside it.
+
 fail() {
   echo "  FAIL: $*"
   failures=$((failures + 1))
@@ -93,15 +97,17 @@ expect "$C" pages/my-services.php 302 index.php
 expect "$C" pages/my-requests-expert.php 302 index.php
 CT=$(token "$C" pages/my-requests.php)
 checks=$((checks + 1))
-curl -s -b "$C" -H "X-CSRF-Token: $CT" -H 'Content-Type: application/json' \
-  -d '{"conversation_id":1,"text":"Smoke test message"}' "$BASE/api/chat-send.php" | grep -q '"message_id"' \
+reply=$(curl -s -b "$C" -H "X-CSRF-Token: $CT" -H 'Content-Type: application/json' \
+  -d '{"conversation_id":1,"text":"Smoke test message"}' "$BASE/api/chat-send.php")
+[[ "$reply" == *'"message_id"'* ]] \
   || fail "api/chat-send.php rejected a JSON message with a valid CSRF token"
 checks=$((checks + 1))
-curl -s -b "$C" -H "X-CSRF-Token: $CT" -d service_id=3 "$BASE/api/toggle-favorite.php" | grep -q '"favorited"' \
+reply=$(curl -s -b "$C" -H "X-CSRF-Token: $CT" -d service_id=3 "$BASE/api/toggle-favorite.php")
+[[ "$reply" == *'"favorited"'* ]] \
   || fail "api/toggle-favorite.php rejected a request with a valid CSRF token"
 checks=$((checks + 1))
-curl -s -b "$C" "$BASE/api/chat-fetch.php?action=list" | grep -q '"conversation_id"' \
-  || fail "api/chat-fetch.php returned no conversations for a customer"
+page=$(curl -s -b "$C" "$BASE/api/chat-fetch.php?action=list")
+[[ "$page" == *'"conversation_id"'* ]] || fail "api/chat-fetch.php returned no conversations for a customer"
 
 echo "== Expert"
 E="$WORK/expert"
@@ -115,7 +121,8 @@ expect "$E" pages/my-requests.php 302 index.php
 expect "$E" "pages/submit-request.php?service=2" 302 service-details.php
 checks=$((checks + 1))
 ET=$(token "$E" pages/my-requests-expert.php)
-curl -s -b "$E" -H "X-CSRF-Token: $ET" -d request_id=1 -d status=Completed "$BASE/api/update-request-status.php" | grep -q "can't be moved" \
+reply=$(curl -s -b "$E" -H "X-CSRF-Token: $ET" -d request_id=1 -d status=Completed "$BASE/api/update-request-status.php")
+[[ "$reply" == *"can't be moved"* ]] \
   || fail "api/update-request-status.php allowed skipping straight to Completed"
 
 echo "== Admin"
@@ -151,6 +158,42 @@ checks=$((checks + 1))
 code=$(curl -s -o /dev/null -w '%{http_code}' -b "$G" -H 'Content-Type: application/json' \
   -d '{"messages":[{"role":"user","text":"hi"}]}' "$BASE/api/assistant.php")
 [[ "$code" == "403" ]] || fail "api/assistant.php accepted a request without a CSRF token (HTTP $code)"
+
+echo "== Expert approval"
+# Farah Aziz signed up but hasn't been approved: customers must not see her
+F="$WORK/farah"
+login "$F" farah@mendly.com
+farah_service=$(curl -s -b "$F" "$BASE/pages/my-services.php" | grep -oE 'add-service\.php\?id=[0-9]+' | head -1 | grep -oE '[0-9]+$')
+checks=$((checks + 1))
+page=$(curl -s -b "$F" "$BASE/pages/my-services.php")
+[[ "$page" == *'being reviewed'* ]] || fail "a pending expert doesn't see the 'being reviewed' banner"
+expect "$F" "pages/service-details.php?id=$farah_service" 200        # she can preview her own listing
+expect "$G" "pages/service-details.php?id=$farah_service" 302 browse-services.php
+checks=$((checks + 1))
+page=$(curl -s "$BASE/pages/experts.php" "$BASE/pages/browse-services.php")
+[[ "$page" == *Farah* || "$page" == *Songket* ]] && fail "a pending expert is visible on the Experts or Browse pages"
+
+# The admin approves her through the review page...
+expect "$A" admin/experts.php 200
+farah_id=$(curl -s -b "$A" "$BASE/admin/experts.php" | grep -oE 'name="expert_id" value="[0-9]+"' | head -1 | grep -oE '[0-9]+')
+curl -s -b "$A" -c "$A" -o /dev/null -d expert_id="$farah_id" -d decision=approve \
+  --data-urlencode "csrf_token=$(token "$A" admin/experts.php)" "$BASE/admin/experts.php"
+# ...and now customers can see her
+checks=$((checks + 1))
+page=$(curl -s "$BASE/pages/experts.php")
+[[ "$page" == *Farah* ]] || fail "an approved expert doesn't appear on the Experts page"
+expect "$G" "pages/service-details.php?id=$farah_service" 200
+
+echo "== Login protection"
+L="$WORK/lockout"
+for i in 1 2 3 4 5; do
+  curl -s -c "$L" -b "$L" -o /dev/null --data-urlencode "email=michael@gmail.com" --data-urlencode "password=wrong$i" \
+    --data-urlencode "csrf_token=$(token "$L" pages/login.php)" "$BASE/actions/process-login.php"
+done
+checks=$((checks + 1))
+where=$(curl -s -c "$L" -b "$L" -o /dev/null -w '%{redirect_url}' --data-urlencode "email=michael@gmail.com" \
+  --data-urlencode "password=$PASSWORD" --data-urlencode "csrf_token=$(token "$L" pages/login.php)" "$BASE/actions/process-login.php")
+[[ "$where" == *"error=locked"* ]] || fail "6th login after 5 wrong passwords wasn't locked (went to $where)"
 
 echo "== Links"
 # Every page sets <base href> to the project root, so relative links are

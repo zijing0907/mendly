@@ -79,3 +79,35 @@
     border-color: #b0413e;
     color: #8f342f;
 }
+
+/* Account review status for new experts */
+.approval-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.approval-banner .icon {
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.approval-pending {
+    background-color: rgba(201, 162, 39, 0.14);
+    color: #6f5612;
+}
+
+.approval-rejected {
+    background-color: rgba(176, 65, 62, 0.12);
+    color: #8f342f;
+}
+
+.approval-banner a {
+    color: inherit;
+    font-weight: 600;
+}

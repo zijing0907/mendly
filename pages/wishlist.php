@@ -18,7 +18,7 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
         SELECT rq.service_id, ROUND(AVG(r.rating), 1) AS average_rating, COUNT(r.review_id) AS total_reviews
         FROM repair_requests rq INNER JOIN reviews r ON r.request_id = rq.request_id GROUP BY rq.service_id
     ) review_summary ON review_summary.service_id = s.service_id
-    WHERE f.customer_id = ?
+    WHERE f.customer_id = ? AND s.status = 'active' AND e.approval_status = 'approved'
     ORDER BY f.created_at DESC";
 
     $stmt = mysqli_prepare($conn, $sql);

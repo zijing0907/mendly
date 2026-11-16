@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 
+$waitMinutes   = max(1, (int) ($_GET['wait'] ?? 15));
 $errorMessages = [
     'missing_email' => 'Please enter your email address.',
+    'too_many'      => "Too many reset requests for that email. Please wait {$waitMinutes} minute"
+        . ($waitMinutes === 1 ? '' : 's') . ' and try again.',
 ];
 
 $formError = $errorMessages[$_GET['error'] ?? ''] ?? null;

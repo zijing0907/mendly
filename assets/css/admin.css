@@ -1,0 +1,312 @@
+/* ==========================================================================
+   Admin area (admin/*.php)
+   ========================================================================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 30px;
+    background: #f4f6f9;
+    color: #333;
+}
+
+.container {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.filters {
+    margin-bottom: 20px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    text-decoration: none;
+    background: #e9ecef;
+    color: #495057;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-weight: 500;
+}
+
+.filter-btn.active {
+    background: #4a69bd;
+    color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    text-align: left;
+}
+
+th {
+    background: #f8f9fa;
+    color: #6c757d;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.role-customer {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.role-expert {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.role-guest {
+    background: #eee;
+    color: #616161;
+}
+
+.status-Pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-In-Progress {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-Resolved {
+    background: #d4edda;
+    color: #155724;
+}
+
+select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.btn-update {
+    padding: 4px 10px;
+    background: #2ed573;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.admin-bar a {
+    color: #4a69bd;
+}
+
+.notice {
+    padding: 10px 14px;
+    border-radius: 4px;
+    background: #e6f6ec;
+    color: #1e7b40;
+}
+
+@media (max-width: 760px) {
+    body {
+        margin: 12px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Admin menu shared by every admin page (includes/admin-nav.php) */
+.admin-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e3e7ee;
+}
+
+.admin-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.admin-nav-links strong {
+    margin-right: 10px;
+    color: #2c3e50;
+}
+
+.admin-nav-links a {
+    padding: 7px 14px;
+    border-radius: 6px;
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.admin-nav-links a.active {
+    background: #4a69bd;
+    color: #fff;
+}
+
+.admin-nav-count {
+    display: inline-block;
+    min-width: 20px;
+    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: #e74c3c;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+}
+
+.admin-nav-user a {
+    color: #4a69bd;
+}
+
+/* Experts to review */
+.expert-review-card {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #e3e7ee;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.expert-review-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #e9ecef;
+}
+
+.expert-review-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.expert-review-card h3 {
+    margin: 0 0 4px;
+    color: #2c3e50;
+}
+
+.expert-review-meta {
+    margin: 0 0 10px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.expert-review-services {
+    margin: 8px 0 14px;
+    padding-left: 18px;
+    font-size: 14px;
+}
+
+.expert-review-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.expert-review-actions form {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+}
+
+.expert-review-actions input[type="text"] {
+    width: 260px;
+    max-width: 100%;
+    padding: 7px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.btn-approve,
+.btn-reject {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-approve {
+    background: #2ed573;
+}
+
+.btn-reject {
+    background: #e74c3c;
+}
+
+.decision-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.decision-approved {
+    background: #e6f6ec;
+    color: #1e7b40;
+}
+
+.decision-rejected {
+    background: #fdecea;
+    color: #b3261e;
+}
+
+.empty-state {
+    padding: 30px;
+    text-align: center;
+    color: #6c757d;
+    border: 1px dashed #ced4da;
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    .expert-review-card {
+        grid-template-columns: 1fr;
+    }
+}

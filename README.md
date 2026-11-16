@@ -30,6 +30,8 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 
 **Repair experts**
 - Self-registration with a business profile; first login goes straight to creating a listing
+- **Admin approval:** new experts can set up services straight away, but customers only see them once an
+  admin approves the account. Until then they see a "being reviewed" banner, or the reason if rejected.
 - **My Services** dashboard: create, edit, deactivate and delete listings, with up to 6 photos each
 - Manage incoming requests; each status change posts an automatic chat message to the customer
 - Public reviews page
@@ -39,6 +41,9 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 - Profile editing with photo upload, password change, account deletion
 - Password reset by email over SMTP, or an on-screen link in demo mode when no mail server is configured
 - Contact form, with an admin inbox (`/admin`) for triaging inquiries
+- Admin area: inquiry inbox plus an **Experts to review** queue (approve, or reject with a reason, and the
+  expert is emailed the decision when email is configured)
+- **Login protection:** after 5 wrong passwords, logging in to that account pauses for 15 minutes
 - Fully responsive layout using only CSS media queries, with a slide-out drawer on mobile
 
 **AI features (optional, free with a Gemini API key)**
@@ -67,7 +72,7 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
 | --- | --- |
 | Front end | HTML5, CSS3 (custom properties, Grid/Flexbox, media queries), vanilla JavaScript (`fetch`, DOM APIs) |
 | Back end | PHP 8 (procedural, `mysqli` prepared statements, sessions) |
-| Database | MySQL 8 / MariaDB, 18 tables with foreign keys and cascades |
+| Database | MySQL 8 / MariaDB, 19 tables with foreign keys and cascades |
 | AI | Google Gemini API over plain REST (cURL): system instructions, image input, JSON-schema output |
 | Tooling | GitHub Actions CI: PHP lint on 8.1–8.3 plus an end-to-end smoke test against a real MySQL |
 
@@ -77,6 +82,12 @@ course, so routing, auth, validation, the chat widget and the responsive layout 
   dynamic filter query on Browse Services.
 - **Passwords:** stored with `password_hash()` (bcrypt) and checked with `password_verify()`. The session ID is
   regenerated on login.
+- **Brute-force protection:** every login, admin login and password-reset request is recorded. Five wrong
+  passwords for one email (or 25 from one IP) in 15 minutes pause that email (or IP) for 15 minutes, using
+  a sliding window. It's checked *before* the password, counts unknown emails the same way so it can't
+  reveal who has an account, and a successful login clears the user's earlier mistakes.
+- **Fake experts:** expert accounts start as pending. Every customer-facing query (browse, details, the
+  experts page, requests, the AI helper) only includes approved experts.
 - **XSS:** server output goes through `htmlspecialchars()`. Chat content rendered by JavaScript is escaped
   before it touches `innerHTML`.
 - **File uploads:** the type is detected from the file's bytes, not its name. Files are stored under random
@@ -161,6 +172,7 @@ All seed accounts use the password **`ChangeMe!2026`**.
 | --- | --- |
 | Customer | `emily@gmail.com` (has requests, reviews and chats) |
 | Expert | `sarah@mendly.com` (3 services) or `alex@mendly.com` |
+| Expert waiting for approval | `farah@mendly.com` (approve or reject her at `/admin/experts.php`) |
 | Admin | username `admin` at `/admin/login.php` |
 
 ### Running the tests
@@ -170,7 +182,7 @@ tests/smoke-test.sh http://localhost:8000
 ```
 
 The script logs in as each role, loads every page, and fails on any PHP warning or error, unexpected status
-code, broken access rule, missing CSRF protection, or broken link (about 140 checks). Run it against a freshly seeded database. CI runs the same script
+code, broken access rule, missing CSRF protection, broken expert approval or login lockout, or broken link (about 150 checks). Run it against a freshly seeded database. CI runs the same script
 on every push.
 
 ## Project structure
@@ -184,11 +196,12 @@ on every push.
 │   ├── db.php           connection, .env loading, shared database helpers
 │   ├── helpers.php      url()/redirect(), escaping, role checks, CSRF check, safe upload extensions
 │   ├── auth.php         login sessions and "Remember me" tokens
+│   ├── login-guard.php  brute-force protection for logins and password resets
 │   ├── mailer.php       minimal SMTP client for password-reset emails
 │   ├── ai.php           Gemini API client, daily limits, photo safety check
 │   ├── assistant.php    "Ask Mendly" prompt, live catalogue, FAQ fallback
 │   └── header.php, nav.php, footer.php, main.php, chat-widget.php, assistant-widget.php
-├── admin/           admin login and inquiry inbox
+├── admin/           admin login, inquiry inbox, experts-to-review queue
 ├── assets/          css/, js/, images/
 ├── database/        schema and seed data (blocked by .htaccess)
 ├── tests/           end-to-end smoke test
@@ -218,7 +231,7 @@ erDiagram
     conversations ||--o{ messages : contains
 ```
 
-Also: `password_resets` (one-time reset tokens), `remember_tokens` (Remember me), `ai_usage` (daily AI limits), `inquiries` (contact form) and `admins`.
+Also: `password_resets` (one-time reset tokens), `remember_tokens` (Remember me), `ai_usage` (daily AI limits), `login_attempts` (login protection), `inquiries` (contact form) and `admins`.
 
 ## Post-submission improvements
 

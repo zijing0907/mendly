@@ -3,8 +3,13 @@ require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(
 
 $errorMessages = [
     'missing_fields'      => 'Please enter both your email and password.',
-    'invalid_credentials' => 'That email or password doesn\'t match our records.',
+    'invalid_credentials' => 'That email or password doesn\'t match our records. (After 5 wrong tries, logging in pauses for 15 minutes.)',
 ];
+
+// Locked out after too many wrong passwords (actions/process-login.php)
+$waitMinutes = max(1, (int) ($_GET['wait'] ?? 15));
+$errorMessages['locked'] = "Too many wrong passwords. For your security, please wait {$waitMinutes} minute"
+    . ($waitMinutes === 1 ? '' : 's') . ' before trying again, or reset your password.';
 
 $formError      = $errorMessages[$_GET['error'] ?? ''] ?? null;
 $justRegistered = isset($_GET['registered']);
@@ -116,7 +121,10 @@ $justDeleted    = isset($_GET['deleted']);
                 </button>
 
                 <p id="successMessage" class="success-message">
-                    <?php if ($justRegistered): ?>
+                    <?php if (($_GET['registered'] ?? '') === 'expert'): ?>
+                        Expert account created! Sign in to set up your services. The Mendly team will review
+                        your profile before customers can see it (usually within 1-2 working days).
+                    <?php elseif ($justRegistered): ?>
                         Account registered successfully! Please sign in to continue.
                     <?php elseif ($justReset): ?>
                         Password reset successfully! Please sign in with your new password.

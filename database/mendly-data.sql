@@ -386,6 +386,25 @@ SET last_message_at = (
 WHERE c.conversation_id IN (@convEmilyAlex, @convMichaelSarah, @convSitiAisyah, @convEmilyGrace, @convMichaelJason, @convSitiDaniel);
 
 -- ============================================================
+-- An expert waiting for approval
+-- ============================================================
+-- Signed up but not reviewed yet: hidden from customers until an admin
+-- approves her in admin/experts.php. Login: farah@mendly.com / ChangeMe!2026
+INSERT INTO experts
+(full_name, email, password, phone, location, business_name, experience,
+ description, bio, years_experience, completed_repairs, response_rate, average_response_time,
+ verified, approval_status, first_login_done)
+VALUES
+('Farah Aziz', 'farah@mendly.com', '$2y$10$T4YhVavDUHqgFEcv7Uy/AeclkNLlAHVVOv.pr2hPq9Cw4zVdvagma', '0123456795', 'Melaka',
+ 'Farah Batik & Songket Care', '3-5', 'Hand-repair of batik, songket and other heritage fabrics.',
+ 'Hand-repair of batik, songket and other heritage fabrics.', 4, 0, 0, NULL,
+ FALSE, 'pending', TRUE);
+SET @farah = LAST_INSERT_ID();
+
+INSERT INTO services (expert_id, category_id, title, description, starting_price, estimated_duration) VALUES
+(@farah, 2, 'Songket & Batik Repair', 'Re-weaving loose songket threads and patching faded batik.', 75, '7-10 Days');
+
+-- ============================================================
 -- Admin account for admin/inquiries.php
 -- ============================================================
 -- Username: admin   Password: ChangeMe!2026 (change before deploying)

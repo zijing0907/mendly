@@ -72,7 +72,7 @@ $sql = "
         INNER JOIN reviews r ON rq.request_id = r.request_id
         GROUP BY rq.service_id
     ) review_summary ON review_summary.service_id = s.service_id
-    WHERE s.service_id = ? AND s.status = 'active'
+    WHERE s.service_id = ? AND s.status = 'active' AND e.approval_status = 'approved'
 ";
 
 $stmt = mysqli_prepare($conn, $sql);

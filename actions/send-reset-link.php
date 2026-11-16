@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../includes/helpers.php';   // starts the session, url(), e(), requireRole()
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/mailer.php';
+require_once __DIR__ . '/../includes/login-guard.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . url('pages/forgot-password.php'));
@@ -14,6 +15,14 @@ if ($email === '') {
     header('Location: ' . url('pages/forgot-password.php?error=missing_email'));
     exit;
 }
+
+// Stop the form being used to flood someone's inbox. Every request counts,
+// whether or not the email has an account, so this reveals nothing.
+$waitMinutes = loginLockedMinutes('reset', $email);
+if ($waitMinutes > 0) {
+    redirect('pages/forgot-password.php?error=too_many&wait=' . $waitMinutes);
+}
+recordLoginAttempt('reset', $email, false);
 
 // Check customers first, then experts — same pattern as actions/process-login.php,
 // since accounts live in two separate tables.
